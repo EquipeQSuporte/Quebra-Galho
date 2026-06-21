@@ -1,4 +1,4 @@
-const CACHE = 'qg-v1';
+const CACHE = 'qg-v2';
 const ASSETS = [
   '/', '/index.html', '/home.html', '/categorias.html',
   '/profissionais.html', '/perfil-pro.html', '/pedidos.html',
