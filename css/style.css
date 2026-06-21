@@ -1808,4 +1808,57 @@ a  { text-decoration: none; color: inherit; }
 .hero-card, .active-bar { box-shadow: 0 4px 16px rgba(0,191,165,0.2) !important; }
 .nav-fab   { box-shadow: 0 4px 16px rgba(0,191,165,0.35) !important; }
 
+/* =============================================
+   TABLET — 640px+
+   ============================================= */
+@media (min-width: 640px) {
+  .app { max-width: 768px; }
+  .bottom-nav, .sticky-footer { max-width: 768px; }
+  .toast { max-width: 480px; }
+
+  /* Header */
+  .home-hdr { padding: 52px 32px 32px; }
+  .home-hdr-name { font-size: 28px !important; }
+  .page-header { padding: 14px 32px; }
+  .filter-bar  { padding: 12px 32px; }
+
+  /* Sections */
+  .section-v2 { padding: 22px 32px; }
+  .section    { padding: 20px 32px; }
+  .hero-card  { margin: 0 32px; }
+
+  /* Categorias: pills em grid (sem scroll horizontal) */
+  .cat-pills {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    overflow-x: visible;
+    padding-bottom: 0;
+    gap: 14px 8px;
+  }
+
+  /* Grid de categorias: mais colunas */
+  .cat-grid { grid-template-columns: repeat(6, 1fr); }
+  .all-cats-grid { grid-template-columns: repeat(3, 1fr) !important; }
+
+  /* Sub-categorias: 3 colunas */
+  .sub-grid { grid-template-columns: repeat(3, 1fr); }
+
+  /* Stats: 4 colunas */
+  .quick-stats { grid-template-columns: repeat(4, 1fr); }
+
+  /* Serviços próximos: 2 colunas */
+  #nearbyList {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  #nearbyList .near-card { margin-bottom: 0; }
+
+  /* Cards de serviço: um pouco maiores */
+  .svc-card    { width: 260px; }
+  .pro-featured { width: 200px; }
+
+  /* Top pros: mais espaço */
+  .top-pros { gap: 20px; }
+}
 
