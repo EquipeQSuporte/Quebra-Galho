@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Pedidos — Quebra Galho</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+<div class="app">
+  <div class="page-header">
+    <a href="home.html" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+    <div class="page-header-title">Meus Pedidos</div>
+  </div>
+
+  <div style="padding:12px 20px 0;background:var(--surface);border-bottom:1px solid var(--border)">
+    <div class="chip-row">
+      <div class="chip active" onclick="filterOrders('todos',this)">Todos</div>
+      <div class="chip" onclick="filterOrders('andamento',this)">Em andamento</div>
+      <div class="chip" onclick="filterOrders('concluido',this)">Concluídos</div>
+      <div class="chip" onclick="filterOrders('cancelado',this)">Cancelados</div>
+    </div>
+  </div>
+
+  <div class="page-content" style="padding-top:16px">
+    <div style="padding:0 20px" id="ordersList"></div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a class="nav-item" href="home.html"><i class="fa-solid fa-house"></i><span>Início</span></a>
+    <a class="nav-item" href="categorias.html"><i class="fa-solid fa-screwdriver-wrench"></i><span>Serviços</span></a>
+    <a class="nav-item nav-center-wrap" href="receber.html">
+      <div class="nav-fab"><i class="fa-solid fa-bolt"></i></div><span>Receber</span>
+    </a>
+    <a class="nav-item" href="ganhos.html"><i class="fa-solid fa-chart-line"></i><span>Ganhos</span></a>
+    <a class="nav-item" href="perfil-usuario.html"><i class="fa-solid fa-user"></i><span>Perfil</span></a>
+  </nav>
+</div>
+<script src="js/app.js"></script>
+<script>
+const ORDERS=[
+  {id:'QG-2847',category:'Hidráulica',name:'Instalação de torneira',pro:'Roberto Alves',proId:1,date:'Hoje, 14:09',price:'R$ 120,00',status:'andamento',statusLabel:'Em andamento',statusClass:'badge-warning',icon:'fa-droplet',iconColor:'#1E88E5',iconBg:'#E3F2FD'},
+  {id:'QG-2801',category:'Limpeza',name:'Limpeza residencial',pro:'Fernanda Costa',proId:6,date:'18 jun, 09:00',price:'R$ 200,00',status:'concluido',statusLabel:'Concluído',statusClass:'badge-success',icon:'fa-broom',iconColor:'#43A047',iconBg:'#E8F5E9'},
+  {id:'QG-2753',category:'Elétrica',name:'Troca de tomadas',pro:'Marina Santos',proId:2,date:'10 jun, 14:00',price:'R$ 180,00',status:'concluido',statusLabel:'Concluído',statusClass:'badge-success',icon:'fa-bolt',iconColor:'#FF8F00',iconBg:'#FFF8E1'},
+  {id:'QG-2710',category:'Transporte',name:'Consulta médica — minha mãe',pro:'João Pedro Lima',proId:5,date:'5 jun, 10:30',price:'R$ 65,00',status:'concluido',statusLabel:'Concluído',statusClass:'badge-success',icon:'fa-car',iconColor:'#00BFA5',iconBg:'#E0F7F4'},
+  {id:'QG-2695',category:'Pintura',name:'Pintura do quarto',pro:'Carlos Ferreira',proId:3,date:'28 mai',price:'R$ 350,00',status:'cancelado',statusLabel:'Cancelado',statusClass:'badge-danger',icon:'fa-paint-roller',iconColor:'#8E24AA',iconBg:'#F3E5F5'},
+];
+let filter='todos';
+function filterOrders(f,el){
+  filter=f;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+function render(){
+  const list=document.getElementById('ordersList');
+  const data=filter==='todos'?ORDERS:ORDERS.filter(o=>o.status===filter);
+  if(!data.length){list.innerHTML='<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-clipboard-list"></i></div><h3 style="font-weight:600">Nenhum pedido</h3><p>Seus pedidos aparecerão aqui.</p><a href="categorias.html" class="btn btn-primary" style="margin-top:12px">Contratar agora</a></div>';return;}
+  list.innerHTML=data.map(o=>`
+    <div class="order-card" onclick="${o.status==='andamento'?"window.location.href='acompanhamento.html'":"window.location.href='perfil-pro.html?id="+o.proId+"'"}">
+      <div class="order-header">
+        <div class="near-icon" style="background:${o.iconBg};color:${o.iconColor};width:40px;height:40px;border-radius:11px;font-size:17px"><i class="fa-solid ${o.icon}"></i></div>
+        <div style="flex:1"><div style="font-size:11px;color:var(--text-2)">${o.category} • ${o.id}</div><div style="font-size:14px;font-weight:600">${o.name}</div></div>
+        <span class="badge ${o.statusClass}">${o.statusLabel}</span>
+      </div>
+      <div class="order-body">
+        <div><div style="font-size:13px;font-weight:500">${o.pro}</div><div style="font-size:12px;color:var(--text-2)"><i class="fa-solid fa-calendar" style="font-size:10px"></i> ${o.date}</div></div>
+        <div style="font-size:16px;font-weight:700;color:var(--primary)">${o.price}</div>
+      </div>
+    </div>`).join('');
+}
+render();
+</script>
+</body>
+</html>

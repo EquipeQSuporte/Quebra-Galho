@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Início — Quebra Galho</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER GRADIENTE -->
+  <div class="home-hdr">
+    <div class="home-hdr-row">
+      <div class="home-hdr-greet">
+        <div class="home-hdr-sub">Bom dia! ☀️</div>
+        <div class="home-hdr-name">Carlos Silva</div>
+      </div>
+      <div class="home-hdr-icons">
+        <button id="themeToggle" class="hdr-icon-btn" title="Alternar tema"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
+        <button class="hdr-icon-btn" onclick="showToast('2 notificações novas!')">
+          <i class="fa-solid fa-bell"></i>
+          <div class="hdr-notif-dot"></div>
+        </button>
+        <a href="perfil-usuario.html">
+          <img src="https://ui-avatars.com/api/?name=Carlos+Silva&background=FFFFFF&color=00BFA5&size=80&bold=true" class="hdr-avatar" alt="Carlos">
+        </a>
+      </div>
+    </div>
+    <!-- SEARCH V2 -->
+    <div class="search-v2">
+      <i class="fa-solid fa-magnifying-glass si"></i>
+      <input type="text" placeholder="Que serviço você precisa?">
+      <button class="search-v2-filter" onclick="window.location.href='categorias.html'">
+        <i class="fa-solid fa-sliders"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- CONTEÚDO -->
+  <div style="padding-top:22px; padding-bottom:90px">
+
+    <!-- CATEGORIAS PILLS -->
+    <div class="section-v2" style="padding-top:0">
+      <div class="section-header" style="margin-bottom:14px">
+        <div class="section-title">Categorias</div>
+        <a href="categorias.html" class="section-link">Ver todas</a>
+      </div>
+      <div class="cat-pills" id="catPills"></div>
+    </div>
+
+    <!-- SERVIÇO ATIVO -->
+    <div style="padding:0 20px 20px">
+      <a href="acompanhamento.html" class="active-bar">
+        <div class="active-bar-icon"><i class="fa-solid fa-wrench"></i></div>
+        <div class="active-bar-body">
+          <div class="active-bar-title">Instalação de torneira • em andamento</div>
+          <div class="active-bar-sub">Roberto Alves — Previsão: 14:30</div>
+        </div>
+        <i class="fa-solid fa-chevron-right active-bar-arrow"></i>
+      </a>
+    </div>
+
+    <!-- SERVIÇOS EM DESTAQUE -->
+    <div class="section-v2" style="padding-top:0">
+      <div class="section-header" style="margin-bottom:14px">
+        <div class="section-title">Serviços em destaque</div>
+        <a href="profissionais.html" class="section-link">Ver todos</a>
+      </div>
+      <div class="scroll-row" id="svcCards"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- TOP PROFISSIONAIS -->
+    <div class="section-v2">
+      <div class="section-header" style="margin-bottom:14px">
+        <div class="section-title">Top Profissionais</div>
+        <a href="profissionais.html" class="section-link">Ver todos</a>
+      </div>
+      <div class="top-pros" id="topPros"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- PRÓXIMOS DE VOCÊ -->
+    <div class="section-v2">
+      <div class="section-header" style="margin-bottom:14px">
+        <div class="section-title">Próximos de você</div>
+        <span class="section-link" style="cursor:pointer" onclick="showToast('Atualizando localização...')">
+          <i class="fa-solid fa-location-crosshairs"></i> Atualizar
+        </span>
+      </div>
+      <div id="nearbyList"></div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <a class="nav-item active" href="home.html" data-page="home">
+      <i class="fa-solid fa-house"></i><span>Início</span>
+    </a>
+    <a class="nav-item" href="categorias.html" data-page="servicos">
+      <i class="fa-solid fa-screwdriver-wrench"></i><span>Serviços</span>
+    </a>
+    <a class="nav-item nav-center-wrap" href="receber.html" data-page="receber">
+      <div class="nav-fab"><i class="fa-solid fa-bolt"></i></div>
+      <span>Receber</span>
+    </a>
+    <a class="nav-item" href="ganhos.html" data-page="ganhos">
+      <i class="fa-solid fa-chart-line"></i><span>Ganhos</span>
+    </a>
+    <a class="nav-item" href="perfil-usuario.html" data-page="perfil">
+      <i class="fa-solid fa-user"></i><span>Perfil</span>
+    </a>
+  </nav>
+
+</div>
+<script src="js/app.js"></script>
+<script>
+// Category pills
+const pills = document.getElementById('catPills');
+CATEGORIES.forEach(cat => {
+  pills.innerHTML += `
+    <a href="categorias.html?cat=${cat.id}" class="cat-pill">
+      <div class="cat-pill-icon" style="background:${cat.bg}; color:${cat.color}">
+        <i class="fa-solid ${cat.icon}"></i>
+      </div>
+      <div class="cat-pill-label">${cat.name}</div>
+    </a>`;
+});
+
+// Service photo cards
+const catImages = {
+  hidraulica: 'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=280&fit=crop&q=80',
+  eletrica:   'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=400&h=280&fit=crop&q=80',
+  pintura:    'https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=400&h=280&fit=crop&q=80',
+  reformas:   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=280&fit=crop&q=80',
+  idosos:     'https://images.unsplash.com/photo-1576765608622-067973a79f53?w=400&h=280&fit=crop&q=80',
+  transporte: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=400&h=280&fit=crop&q=80',
+  limpeza:    'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&h=280&fit=crop&q=80',
+  digital:    'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=280&fit=crop&q=80',
+};
+const badges = [
+  {cls:'svc-badge-hot', txt:'Mais pedido'},
+  {cls:'svc-badge-rec', txt:'Recomendado'},
+  {cls:'svc-badge-new', txt:'Novo'},
+];
+const svcCards = document.getElementById('svcCards');
+PROFESSIONALS.slice(0,6).forEach((pro, i) => {
+  const cat = getCat(pro.category);
+  const b = badges[i % badges.length];
+  const imgUrl = catImages[pro.category] || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=280&fit=crop&q=80';
+  svcCards.innerHTML += `
+    <a href="perfil-pro.html?id=${pro.id}" class="svc-card">
+      <div class="svc-img-wrap">
+        <img src="${imgUrl}" class="svc-img" alt="${pro.specialty}" onerror="this.style.background='var(--surface-2)'">
+        <div class="svc-rating"><i class="fa-solid fa-star"></i>${pro.rating}</div>
+        <button class="svc-bookmark" onclick="event.preventDefault();this.classList.toggle('saved');showToast(this.classList.contains('saved')?'Salvo nos favoritos ❤️':'Removido dos favoritos')">
+          <i class="fa-${this && this.classList && this.classList.contains('saved') ? 'solid' : 'regular'} fa-heart"></i>
+        </button>
+        <span class="svc-badge ${b.cls}">${b.txt}</span>
+      </div>
+      <div class="svc-body">
+        <div class="svc-title">${pro.specialty} — ${pro.skills[0]}</div>
+        <div class="svc-pro">
+          <img src="${pro.avatar}" class="svc-pro-img" alt="${pro.name}" onerror="this.style.background='var(--primary-light)'">
+          ${pro.name}
+        </div>
+        <div class="svc-footer">
+          <div class="svc-price">${pro.price}</div>
+          <div class="svc-dist"><i class="fa-solid fa-location-dot"></i>${pro.distance}</div>
+        </div>
+      </div>
+    </a>`;
+});
+
+// Top pros
+const topPros = document.getElementById('topPros');
+PROFESSIONALS.forEach(pro => {
+  topPros.innerHTML += `
+    <a href="perfil-pro.html?id=${pro.id}" class="top-pro-item">
+      <div class="top-pro-ring">
+        <div class="top-pro-ring-inner">
+          <img src="${pro.avatar}" alt="${pro.name}" onerror="this.style.background='var(--primary-light)'">
+        </div>
+      </div>
+      <div class="top-pro-name">${pro.name.split(' ')[0]}</div>
+      <div class="top-pro-spec">${pro.specialty}</div>
+    </a>`;
+});
+
+// Nearby list
+const nearby = document.getElementById('nearbyList');
+const nearItems = [
+  {cat:'hidraulica',name:'Encanamento',pro:'Roberto Alves',dist:'1.2 km',price:'R$ 80',icon:'fa-droplet',color:'#1E88E5',bg:'#E3F2FD',id:1},
+  {cat:'eletrica',name:'Elétrica Geral',pro:'Marina Santos',dist:'2.1 km',price:'R$ 100',icon:'fa-bolt',color:'#FF8F00',bg:'#FFF8E1',id:2},
+  {cat:'limpeza',name:'Limpeza Residencial',pro:'Fernanda Costa',dist:'1.9 km',price:'R$ 150',icon:'fa-broom',color:'#43A047',bg:'#E8F5E9',id:6},
+  {cat:'idosos',name:'Cuidado de Idosos',pro:'Ana Rodrigues',dist:'0.8 km',price:'R$ 60',icon:'fa-heart',color:'#E53935',bg:'#FFEBEE',id:4},
+];
+nearItems.forEach(item => {
+  nearby.innerHTML += `
+    <a href="perfil-pro.html?id=${item.id}" class="near-card">
+      <div class="near-icon" style="background:${item.bg};color:${item.color}">
+        <i class="fa-solid ${item.icon}"></i>
+      </div>
+      <div class="near-info">
+        <div class="near-name">${item.name}</div>
+        <div class="near-meta"><i class="fa-solid fa-user" style="font-size:10px"></i> ${item.pro} &nbsp;•&nbsp; ${item.dist}</div>
+      </div>
+      <div class="near-price">${item.price}</div>
+    </a>`;
+});
+</script>
+</body>
+</html>

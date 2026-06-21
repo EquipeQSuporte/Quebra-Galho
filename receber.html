@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Solicitar Serviço — Quebra Galho</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="icon" type="image/png" href="assets/icon.png">
+  <style>
+    .receber-hdr {
+      background: var(--primary);
+      padding: 52px 20px 28px;
+      border-radius: 0 0 28px 28px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,194,168,0.25);
+    }
+    .receber-hdr::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 88% 10%, rgba(255,255,255,0.13) 0%, transparent 45%),
+        radial-gradient(circle at 5%  90%, rgba(255,255,255,0.08) 0%, transparent 40%);
+      pointer-events: none;
+    }
+    .receber-hdr > * { position: relative; z-index: 1; }
+    .receber-hdr-title { font-size: 20px; font-weight: 700; color: white; margin-bottom: 4px; }
+    .receber-hdr-sub { font-size: 13px; color: rgba(255,255,255,0.75); }
+
+    .request-card {
+      background: var(--surface);
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      margin-bottom: 14px;
+      cursor: pointer;
+      transition: all .22s;
+    }
+    .request-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .request-card-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+    .request-card-icon { width: 44px; height: 44px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .request-card-title { font-size: 14px; font-weight: 600; }
+    .request-card-meta { font-size: 12px; color: var(--text-2); margin-top: 3px; }
+    .request-card-status { margin-left: auto; }
+    .request-proposals { display: flex; flex-direction: column; gap: 8px; }
+
+    .proposal-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--surface-2);
+      border-radius: 12px;
+    }
+    .proposal-avatar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); background: var(--surface-3); flex-shrink: 0; }
+    .proposal-name { font-size: 13px; font-weight: 600; }
+    .proposal-rating { font-size: 11px; color: var(--text-2); margin-top: 1px; }
+    .proposal-price { margin-left: auto; font-size: 15px; font-weight: 700; color: var(--primary); }
+    .proposal-btn { margin-left: 8px; padding: 6px 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-family: var(--font); font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s; }
+    .proposal-btn:hover { background: var(--primary-dark); }
+
+    .new-request-form { display: none; }
+    .new-request-form.show { display: block; animation: slideUp .35s ease; }
+
+    .empty-requests {
+      text-align: center;
+      padding: 28px 20px;
+      color: var(--text-2);
+    }
+    .empty-requests i { font-size: 40px; color: var(--text-3); margin-bottom: 12px; display: block; }
+
+    .how-works { display: flex; flex-direction: column; gap: 0; }
+    .how-step { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .how-step:last-child { border-bottom: none; }
+    .how-num { width: 32px; height: 32px; border-radius: 50%; background: var(--primary-light); color: var(--primary); font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .how-title { font-size: 13px; font-weight: 600; }
+    .how-sub { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <div class="receber-hdr">
+    <div class="receber-hdr-title">Solicitar Serviço</div>
+    <div class="receber-hdr-sub">Poste o que você precisa e receba propostas de profissionais</div>
+  </div>
+
+  <div class="page-content" style="padding-top:0">
+
+    <!-- SOLICITAÇÃO ATIVA -->
+    <div class="section">
+      <div class="section-header" style="margin-bottom:14px">
+        <div class="section-title">Solicitação ativa</div>
+        <span class="badge badge-warning" style="font-size:11px">1 ativa</span>
+      </div>
+
+      <div class="request-card">
+        <div class="request-card-header">
+          <div class="request-card-icon" style="background:#E3F2FD;color:#1E88E5"><i class="fa-solid fa-droplet"></i></div>
+          <div>
+            <div class="request-card-title">Vazamento na cozinha</div>
+            <div class="request-card-meta"><i class="fa-solid fa-calendar" style="font-size:10px"></i> Hoje • <i class="fa-solid fa-location-dot" style="font-size:10px"></i> Rua das Flores, 123</div>
+          </div>
+          <div class="request-card-status"><span class="badge badge-warning">Aguardando</span></div>
+        </div>
+        <div style="font-size:12px;color:var(--text-2);margin-bottom:12px">Orçamento esperado: R$ 80–150 • Urgente</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px">3 propostas recebidas</div>
+        <div class="request-proposals" id="proposalList"></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- NOVA SOLICITAÇÃO -->
+    <div class="section">
+      <div class="section-title" style="margin-bottom:14px">Nova solicitação</div>
+      <button class="btn btn-primary btn-full" onclick="toggleForm(this)">
+        <i class="fa-solid fa-plus"></i> Postar serviço
+      </button>
+      <div class="new-request-form" id="newReqForm" style="margin-top:16px">
+        <div class="input-group"><label class="input-label">Tipo de serviço</label>
+          <select class="input-field" style="appearance:none">
+            <option>Hidráulica</option><option>Elétrica</option><option>Pintura</option>
+            <option>Reformas</option><option>Limpeza</option><option>Transporte</option>
+            <option>Cuidados</option><option>Digital</option>
+          </select>
+        </div>
+        <div class="input-group"><label class="input-label">Descreva o problema</label>
+          <textarea class="input-textarea" placeholder="Ex: Torneira com vazamento no banheiro, precisa trocar o vedante..." style="height:80px"></textarea>
+        </div>
+        <div class="input-group"><label class="input-label">Quando precisa?</label>
+          <input type="text" class="input-field" placeholder="Ex: Hoje à tarde, amanhã, essa semana">
+        </div>
+        <div class="input-group"><label class="input-label">Orçamento estimado</label>
+          <input type="text" class="input-field" placeholder="Ex: R$ 50–150">
+        </div>
+        <button class="btn btn-primary btn-full" onclick="enviarSolicitacao()">
+          <i class="fa-solid fa-paper-plane"></i> Enviar solicitação
+        </button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- COMO FUNCIONA -->
+    <div class="section">
+      <div class="section-title" style="margin-bottom:14px">Como funciona</div>
+      <div class="how-works">
+        <div class="how-step">
+          <div class="how-num">1</div>
+          <div><div class="how-title">Poste sua necessidade</div><div class="how-sub">Descreva o serviço, prazo e orçamento</div></div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">2</div>
+          <div><div class="how-title">Receba propostas</div><div class="how-sub">Profissionais verificados enviam suas ofertas</div></div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">3</div>
+          <div><div class="how-title">Escolha e contrate</div><div class="how-sub">Compare avaliações, preços e escolha o melhor</div></div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">4</div>
+          <div><div class="how-title">Acompanhe ao vivo</div><div class="how-sub">Fotos e atualizações em tempo real do serviço</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <nav class="bottom-nav">
+    <a class="nav-item" href="home.html"><i class="fa-solid fa-house"></i><span>Início</span></a>
+    <a class="nav-item" href="categorias.html"><i class="fa-solid fa-screwdriver-wrench"></i><span>Serviços</span></a>
+    <a class="nav-item nav-center-wrap active" href="receber.html">
+      <div class="nav-fab"><i class="fa-solid fa-bolt"></i></div><span>Receber</span>
+    </a>
+    <a class="nav-item" href="ganhos.html"><i class="fa-solid fa-chart-line"></i><span>Ganhos</span></a>
+    <a class="nav-item" href="perfil-usuario.html"><i class="fa-solid fa-user"></i><span>Perfil</span></a>
+  </nav>
+</div>
+<script src="js/app.js"></script>
+<script>
+const proposals = [
+  { proId:1, price:'R$ 90', name:'Roberto Alves', rating:'4.9 ★', dist:'1.2 km' },
+  { proId:2, price:'R$ 120', name:'Marco Silva', rating:'4.7 ★', dist:'2.4 km' },
+  { proId:6, price:'R$ 80', name:'Paulo Souza', rating:'4.5 ★', dist:'3.1 km' },
+];
+const pl = document.getElementById('proposalList');
+proposals.forEach(p => {
+  pl.innerHTML += `
+    <div class="proposal-item">
+      <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=00C2A8&color=fff&size=80" class="proposal-avatar" alt="${p.name}">
+      <div>
+        <div class="proposal-name">${p.name}</div>
+        <div class="proposal-rating">${p.rating} • ${p.dist}</div>
+      </div>
+      <div class="proposal-price">${p.price}</div>
+      <button class="proposal-btn" onclick="window.location.href='perfil-pro.html?id=${p.proId}'">Ver</button>
+    </div>`;
+});
+
+function toggleForm(btn) {
+  const f = document.getElementById('newReqForm');
+  const show = !f.classList.contains('show');
+  f.classList.toggle('show', show);
+  btn.innerHTML = show
+    ? '<i class="fa-solid fa-xmark"></i> Cancelar'
+    : '<i class="fa-solid fa-plus"></i> Postar serviço';
+}
+
+function enviarSolicitacao() {
+  document.getElementById('newReqForm').classList.remove('show');
+  showToast('Solicitação enviada! Aguarde as propostas. 🎉');
+}
+</script>
+</body>
+</html>

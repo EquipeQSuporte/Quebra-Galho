@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Meu Perfil — Quebra Galho</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .profile-top{background:var(--primary);padding:52px 20px 24px;display:flex;flex-direction:column;align-items:center;gap:8px;color:white;position:relative}
+    .profile-top-avatar{width:80px;height:80px;border-radius:50%;border:2.5px solid rgba(255,255,255,0.6);object-fit:cover;background:rgba(255,255,255,0.2)}
+    .profile-top-name{font-size:20px;font-weight:600}
+    .profile-top-email{font-size:13px;opacity:0.75}
+    .stat-row-4{display:grid;grid-template-columns:repeat(4,1fr);background:var(--surface);border-bottom:1px solid var(--border)}
+    .stat-cell{padding:14px 4px;text-align:center;border-right:1px solid var(--border)}
+    .stat-cell:last-child{border-right:none}
+    .stat-cell-num{font-size:20px;font-weight:700;color:var(--primary)}
+    .stat-cell-label{font-size:10.5px;color:var(--text-2);margin-top:2px}
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="profile-top">
+    <button id="themeToggle" class="theme-toggle" style="position:absolute;top:16px;right:16px"></button>
+    <img src="https://ui-avatars.com/api/?name=Carlos+Silva&background=FFFFFF&color=00BFA5&size=128&bold=true" class="profile-top-avatar" alt="Carlos">
+    <div class="profile-top-name">Carlos Silva</div>
+    <div class="profile-top-email">carlos.silva@gmail.com</div>
+    <div style="display:flex;gap:6px;margin-top:4px">
+      <span class="badge" style="background:rgba(255,255,255,0.18);color:white;font-size:11px"><i class="fa-solid fa-location-dot"></i> São Paulo, SP</span>
+      <span class="badge" style="background:rgba(255,255,255,0.18);color:white;font-size:11px"><i class="fa-solid fa-check"></i> Verificado</span>
+    </div>
+  </div>
+
+  <div class="stat-row-4">
+    <div class="stat-cell"><div class="stat-cell-num">47</div><div class="stat-cell-label">Serviços</div></div>
+    <div class="stat-cell"><div class="stat-cell-num">4.9</div><div class="stat-cell-label">Avaliação</div></div>
+    <div class="stat-cell"><div class="stat-cell-num">8</div><div class="stat-cell-label">Favoritos</div></div>
+    <div class="stat-cell"><div class="stat-cell-num">2</div><div class="stat-cell-label">Anos</div></div>
+  </div>
+
+  <div class="page-content" style="padding-top:0">
+
+    <div class="section">
+      <div class="section-title" style="margin-bottom:12px">Acesso rápido</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <a href="pedidos.html" class="sub-card">
+          <div class="sub-icon" style="background:#E3F2FD;color:#1E88E5"><i class="fa-solid fa-clipboard-list"></i></div>
+          <div><div class="sub-name">Pedidos</div><div class="sub-count">1 ativo</div></div>
+        </a>
+        <div class="sub-card" onclick="showToast('Favoritos em breve!')">
+          <div class="sub-icon" style="background:#FFEBEE;color:#E53935"><i class="fa-solid fa-heart"></i></div>
+          <div><div class="sub-name">Favoritos</div><div class="sub-count">8 salvos</div></div>
+        </div>
+        <div class="sub-card" onclick="showToast('Endereços em breve!')">
+          <div class="sub-icon" style="background:#E8F5E9;color:#43A047"><i class="fa-solid fa-map-location-dot"></i></div>
+          <div><div class="sub-name">Endereços</div><div class="sub-count">2 salvos</div></div>
+        </div>
+        <div class="sub-card" onclick="showToast('Carteira em breve!')">
+          <div class="sub-icon" style="background:#FFF8E1;color:#FF8F00"><i class="fa-solid fa-wallet"></i></div>
+          <div><div class="sub-name">Carteira</div><div class="sub-count">R$ 45,00</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section">
+      <div class="section-title" style="margin-bottom:12px">Configurações</div>
+      <div class="settings-list">
+        <div class="settings-item" onclick="showToast('Editando perfil...')">
+          <div class="settings-item-icon" style="background:#E3F2FD;color:#1E88E5"><i class="fa-solid fa-user-pen"></i></div>
+          <div class="settings-item-text"><div class="settings-item-label">Editar perfil</div><div class="settings-item-sub">Nome, foto, telefone</div></div>
+          <i class="fa-solid fa-chevron-right arrow"></i>
+        </div>
+        <div class="settings-item" onclick="showToast('Notificações!')">
+          <div class="settings-item-icon" style="background:#F3E5F5;color:#8E24AA"><i class="fa-solid fa-bell"></i></div>
+          <div class="settings-item-text"><div class="settings-item-label">Notificações</div><div class="settings-item-sub">Pedidos, ofertas, novidades</div></div>
+          <i class="fa-solid fa-chevron-right arrow"></i>
+        </div>
+        <div class="settings-item" onclick="showToast('Seus dados estão seguros!')">
+          <div class="settings-item-icon" style="background:#E8F5E9;color:#43A047"><i class="fa-solid fa-shield-halved"></i></div>
+          <div class="settings-item-text"><div class="settings-item-label">Privacidade</div><div class="settings-item-sub">Dados, senha, verificação</div></div>
+          <i class="fa-solid fa-chevron-right arrow"></i>
+        </div>
+        <div class="settings-item" onclick="toggleTheme()">
+          <div class="settings-item-icon" style="background:#FFF8E1;color:#FF8F00"><i class="fa-solid fa-moon"></i></div>
+          <div class="settings-item-text"><div class="settings-item-label">Tema</div><div class="settings-item-sub" id="themeLabel">Modo claro</div></div>
+          <button id="themeToggleMini" class="theme-toggle" style="width:36px;height:20px;pointer-events:none"></button>
+        </div>
+        <div class="settings-item" onclick="showToast('Suporte: (11) 9999-8888')">
+          <div class="settings-item-icon" style="background:#E0F7F4;color:#00BFA5"><i class="fa-solid fa-headset"></i></div>
+          <div class="settings-item-text"><div class="settings-item-label">Central de ajuda</div><div class="settings-item-sub">FAQ, chat, telefone</div></div>
+          <i class="fa-solid fa-chevron-right arrow"></i>
+        </div>
+        <a href="pro-home.html" class="settings-item">
+          <div class="settings-item-icon" style="background:#E8F5E9;color:#43A047"><i class="fa-solid fa-briefcase"></i></div>
+          <div class="settings-item-text"><div class="settings-item-label">Área do Profissional</div><div class="settings-item-sub">Gerencie seus serviços</div></div>
+          <span class="badge badge-primary" style="font-size:10px">Novo</span>
+        </a>
+      </div>
+    </div>
+
+    <div style="padding:12px 20px 28px;text-align:center">
+      <button onclick="showToast('Até logo!')" class="btn" style="color:#F44336;border:1.5px solid #FFCDD2;background:transparent">
+        <i class="fa-solid fa-right-from-bracket"></i> Sair da conta
+      </button>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a class="nav-item" href="home.html"><i class="fa-solid fa-house"></i><span>Início</span></a>
+    <a class="nav-item" href="categorias.html"><i class="fa-solid fa-screwdriver-wrench"></i><span>Serviços</span></a>
+    <a class="nav-item nav-center-wrap" href="receber.html">
+      <div class="nav-fab"><i class="fa-solid fa-bolt"></i></div><span>Receber</span>
+    </a>
+    <a class="nav-item" href="ganhos.html"><i class="fa-solid fa-chart-line"></i><span>Ganhos</span></a>
+    <a class="nav-item active" href="perfil-usuario.html"><i class="fa-solid fa-user"></i><span>Perfil</span></a>
+  </nav>
+</div>
+<script src="js/app.js"></script>
+<script>
+function toggleTheme(){
+  const c=document.documentElement.getAttribute('data-theme');
+  const n=c==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',n);
+  localStorage.setItem('qg_theme',n);
+  ['themeToggle','themeToggleMini'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('active',n==='dark');});
+  const lbl=document.getElementById('themeLabel');
+  if(lbl)lbl.textContent=n==='dark'?'Modo escuro':'Modo claro';
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  initTheme();
+  const dark=document.documentElement.getAttribute('data-theme')==='dark';
+  const t2=document.getElementById('themeToggleMini');
+  const lbl=document.getElementById('themeLabel');
+  if(t2)t2.classList.toggle('active',dark);
+  if(lbl)lbl.textContent=dark?'Modo escuro':'Modo claro';
+});
+</script>
+</body>
+</html>

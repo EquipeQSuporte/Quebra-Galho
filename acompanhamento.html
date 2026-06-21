@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Acompanhamento — Quebra Galho</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .track-hdr{background:var(--primary);padding:52px 20px 20px;color:white;position:sticky;top:0;z-index:100}
+    .track-hdr-row{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+    .track-back{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.2);border:none;color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px}
+    .track-title{font-size:16px;font-weight:600;flex:1}
+    .track-mini{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.15);border-radius:14px;padding:12px 14px}
+    .track-mini-avatar{width:46px;height:46px;border-radius:50%;border:2px solid rgba(255,255,255,0.5);object-fit:cover;background:rgba(255,255,255,0.2)}
+    .track-mini-name{font-size:14px;font-weight:600}
+    .track-mini-svc{font-size:12px;opacity:.85}
+    .track-mini-btns{display:flex;gap:8px;margin-left:auto}
+    .track-action{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.2);border:none;color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;transition:all .2s}
+    .track-action:hover{background:rgba(255,255,255,0.35)}
+
+    .eta-row{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;gap:12px}
+    .eta-ic{width:42px;height:42px;border-radius:12px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:18px;flex-shrink:0}
+    .eta-label{font-size:12px;color:var(--text-2)}
+    .eta-val{font-size:17px;font-weight:700}
+
+    .rating-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:999;align-items:flex-end}
+    .rating-modal.show{display:flex;animation:fadeIn .3s ease}
+    .rating-sheet{width:100%;max-width:430px;margin:0 auto;background:var(--surface);border-radius:28px 28px 0 0;padding:28px 24px 40px;animation:slideUp .4s ease}
+    .rating-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 22px}
+    .star-row{display:flex;gap:10px;justify-content:center;margin:14px 0}
+    .star-btn{font-size:34px;cursor:pointer;color:var(--border);transition:all .15s}
+    .star-btn.lit{color:#FFB300;transform:scale(1.12)}
+
+    .conclude-banner{background:var(--primary-light);border:1.5px solid rgba(3,176,159,.3);border-radius:var(--r);padding:14px 16px;display:none;align-items:center;gap:12px}
+    .conclude-banner.show{display:flex;animation:slideUp .4s ease}
+    [data-theme="dark"] .conclude-banner{background:rgba(3,176,159,.08);border-color:rgba(3,176,159,.2)}
+    .conclude-ic{width:40px;height:40px;border-radius:11px;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+    .conclude-title{font-size:13px;font-weight:600;color:var(--primary)}
+    .conclude-sub{font-size:12px;color:var(--text-2)}
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <div class="track-hdr">
+    <div class="track-hdr-row">
+      <button class="track-back" onclick="history.back()"><i class="fa-solid fa-chevron-left"></i></button>
+      <div class="track-title">Serviço em andamento</div>
+      <button class="track-action" onclick="showToast('Atualizações ao vivo ativadas! 📡')"><i class="fa-solid fa-wifi"></i></button>
+    </div>
+    <div class="track-mini">
+      <img id="tAvatar" src="" class="track-mini-avatar" alt="Pro">
+      <div>
+        <div class="track-mini-name" id="tName">—</div>
+        <div class="track-mini-svc">Instalação de torneira</div>
+      </div>
+      <div class="track-mini-btns">
+        <button class="track-action" onclick="showToast('Ligando... 📞')"><i class="fa-solid fa-phone"></i></button>
+        <button class="track-action" onclick="showToast('Chat aberto! 💬')"><i class="fa-solid fa-message"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content" style="padding-top:0">
+
+    <!-- ETA -->
+    <div class="section">
+      <div class="eta-row">
+        <div class="eta-ic"><i class="fa-solid fa-clock-rotate-left"></i></div>
+        <div>
+          <div class="eta-label">Previsão de conclusão</div>
+          <div class="eta-val">14:30</div>
+        </div>
+        <div style="margin-left:auto;text-align:right">
+          <span class="badge badge-warning" id="statusBadge">Em andamento</span>
+          <div style="font-size:11px;color:var(--text-2);margin-top:4px" id="elapsed">há 23 min</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAPA -->
+    <div style="padding:0 20px 20px">
+      <div class="map-mock">
+        <div class="map-road-h"></div>
+        <div class="map-road-v"></div>
+        <div class="map-pin" style="top:38%;left:30%"></div>
+        <div class="map-pro-dot" style="top:42%;left:48%"></div>
+        <div class="map-label"><i class="fa-solid fa-location-dot" style="color:var(--primary)"></i> Rua das Flores, 123</div>
+        <div style="position:absolute;top:10px;right:10px;background:var(--surface);border-radius:8px;padding:5px 10px;font-size:11px;font-weight:500;box-shadow:var(--shadow);color:var(--text)">
+          <i class="fa-solid fa-circle" style="color:#FF5722;font-size:8px"></i> Roberto
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- TIMELINE -->
+    <div class="section">
+      <div class="section-title" style="margin-bottom:18px">Etapas</div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-indicator"><div class="t-dot done"><i class="fa-solid fa-check" style="font-size:10px"></i></div><div class="t-line done"></div></div>
+          <div class="t-content"><div class="t-title">Pedido confirmado</div><div class="t-time">13:45</div></div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-indicator"><div class="t-dot done"><i class="fa-solid fa-check" style="font-size:10px"></i></div><div class="t-line done"></div></div>
+          <div class="t-content"><div class="t-title">Profissional a caminho</div><div class="t-time">13:52</div><div class="t-desc">Roberto saiu em direção ao local</div></div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-indicator"><div class="t-dot done"><i class="fa-solid fa-check" style="font-size:10px"></i></div><div class="t-line done"></div></div>
+          <div class="t-content"><div class="t-title">Profissional chegou</div><div class="t-time">14:07</div></div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-indicator"><div class="t-dot active"><i class="fa-solid fa-wrench" style="font-size:10px"></i></div><div class="t-line pending"></div></div>
+          <div class="t-content"><div class="t-title" style="color:var(--primary)">Serviço em andamento</div><div class="t-time">14:09</div></div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-indicator"><div class="t-dot pending" id="dotLast">5</div></div>
+          <div class="t-content"><div class="t-title" style="color:var(--text-3)">Concluído</div><div class="t-time" style="color:var(--text-3)">Previsão: 14:30</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ATUALIZAÇÕES -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Atualizações</div>
+        <span class="badge badge-success" style="font-size:10px"><i class="fa-solid fa-circle" style="font-size:7px"></i> Ao vivo</span>
+      </div>
+      <div class="updates-list" id="updatesList">
+        <div class="update-card">
+          <div class="update-icon-wrap" style="background:#E3F2FD;color:#1E88E5"><i class="fa-solid fa-circle-check"></i></div>
+          <div class="update-body">
+            <div class="update-title">Avaliação feita</div>
+            <div class="update-text">Vazamento no vedante + rosca solta. Vou substituir a torneira completa. Material já separado.</div>
+            <div class="update-time">14:09</div>
+          </div>
+        </div>
+        <div class="update-card">
+          <div class="update-icon-wrap" style="background:#FFF8E1;color:#FF8F00"><i class="fa-solid fa-camera"></i></div>
+          <div class="update-body">
+            <div class="update-title">Foto — antes</div>
+            <div class="update-text">Vedante completamente gasto</div>
+            <img src="https://picsum.photos/seed/antes1/400/200" class="update-photo" alt="Antes" loading="lazy" onerror="this.style.background='var(--surface-2)'">
+            <div class="update-time">14:11</div>
+          </div>
+        </div>
+        <div class="update-card" id="upd3" style="display:none">
+          <div class="update-icon-wrap" style="background:#E8F5E9;color:#43A047"><i class="fa-solid fa-wrench"></i></div>
+          <div class="update-body">
+            <div class="update-title">Instalação em andamento</div>
+            <div class="update-text">Torneira nova instalada, testando pressão. Tudo ótimo!</div>
+            <img src="https://picsum.photos/seed/durante2/400/200" class="update-photo" alt="Durante" loading="lazy" onerror="this.style.background='var(--surface-2)'">
+            <div class="update-time" id="t3">14:18</div>
+          </div>
+        </div>
+        <div class="update-card" id="upd4" style="display:none">
+          <div class="update-icon-wrap" style="background:var(--primary-light);color:var(--primary)"><i class="fa-solid fa-check-double"></i></div>
+          <div class="update-body">
+            <div class="update-title">Serviço finalizado! 🎉</div>
+            <div class="update-text">Torneira instalada e testada. Sem vazamentos. Obrigado pela confiança!</div>
+            <img src="https://picsum.photos/seed/depois3/400/200" class="update-photo" alt="Depois" loading="lazy" onerror="this.style.background='var(--surface-2)'">
+            <div class="update-time" id="t4">14:27</div>
+          </div>
+        </div>
+      </div>
+      <div class="conclude-banner" id="concludeBanner" style="margin-top:14px">
+        <div class="conclude-ic"><i class="fa-solid fa-circle-check"></i></div>
+        <div><div class="conclude-title">Concluído com sucesso!</div><div class="conclude-sub">Como foi a experiência?</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- STICKY FOOTER -->
+  <div class="sticky-footer">
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-ghost" style="flex:1" onclick="showToast('Problema reportado!')"><i class="fa-solid fa-triangle-exclamation"></i> Reportar</button>
+      <button class="btn btn-primary" style="flex:2" onclick="abrirAvaliacao()"><i class="fa-solid fa-star"></i> Avaliar</button>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="rating-modal" id="ratingModal" onclick="if(event.target===this)this.classList.remove('show')">
+    <div class="rating-sheet">
+      <div class="rating-handle"></div>
+      <div style="text-align:center">
+        <img id="mAvatar" src="" style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);margin-bottom:10px;background:var(--surface-2)" alt="">
+        <h3 id="mName" style="font-weight:600;margin-bottom:4px">—</h3>
+        <p style="font-size:13px;color:var(--text-2)">Como foi o serviço?</p>
+        <div class="star-row" id="starRow">
+          <span class="star-btn" onclick="setStar(1)">★</span>
+          <span class="star-btn" onclick="setStar(2)">★</span>
+          <span class="star-btn" onclick="setStar(3)">★</span>
+          <span class="star-btn" onclick="setStar(4)">★</span>
+          <span class="star-btn" onclick="setStar(5)">★</span>
+        </div>
+        <p id="starLbl" style="font-size:13px;font-weight:600;color:var(--primary);min-height:18px"></p>
+      </div>
+      <div class="input-group" style="margin-top:14px">
+        <label class="input-label">Comentário (opcional)</label>
+        <textarea class="input-textarea" placeholder="Descreva sua experiência..." style="height:70px"></textarea>
+      </div>
+      <button class="btn btn-primary btn-full" style="margin-top:8px" onclick="enviarAvaliacao()"><i class="fa-solid fa-paper-plane"></i> Enviar avaliação</button>
+    </div>
+  </div>
+
+  <!-- NAV (visível abaixo do sticky footer - nav não aparece aqui pois há sticky footer, mas incluído para consistência) -->
+
+</div>
+<script src="js/app.js"></script>
+<script>
+const active=loadData('activeService');
+const proId=(active&&active.proId)||1;
+const pro=getPro(proId);
+if(pro){
+  document.getElementById('tAvatar').src=pro.avatar;
+  document.getElementById('tName').textContent=pro.name;
+  document.getElementById('mAvatar').src=pro.avatar;
+  document.getElementById('mName').textContent=pro.name;
+}
+
+let elapsed=23;
+setInterval(()=>{elapsed++;const el=document.getElementById('elapsed');if(el)el.textContent=elapsed<60?`há ${elapsed} min`:`há ${Math.floor(elapsed/60)}h ${elapsed%60}min`;},60000);
+
+setTimeout(()=>{
+  const el=document.getElementById('upd3');
+  if(el){el.style.display='flex';el.style.animation='slideUp .4s ease';el.scrollIntoView({behavior:'smooth',block:'nearest'});showToast('📸 Nova foto do Roberto!');}
+},4000);
+
+setTimeout(()=>{
+  const el=document.getElementById('upd4');
+  const bn=document.getElementById('concludeBanner');
+  if(el){el.style.display='flex';el.style.animation='slideUp .4s ease';el.scrollIntoView({behavior:'smooth',block:'nearest'});}
+  if(bn)bn.classList.add('show');
+  const b=document.getElementById('statusBadge');
+  if(b){b.className='badge badge-success';b.textContent='Concluído';}
+  const dl=document.getElementById('dotLast');
+  if(dl){dl.className='t-dot done';dl.innerHTML='<i class="fa-solid fa-check" style="font-size:10px"></i>';}
+  showToast('✅ Concluído! Avalie o profissional.');
+},10000);
+
+let star=0;
+const lbls=['','Ruim','Regular','Bom','Ótimo','Excelente! 🤩'];
+function setStar(n){star=n;document.querySelectorAll('.star-btn').forEach((s,i)=>s.classList.toggle('lit',i<n));document.getElementById('starLbl').textContent=lbls[n];}
+function abrirAvaliacao(){document.getElementById('ratingModal').classList.add('show');}
+function enviarAvaliacao(){if(!star){showToast('Selecione uma nota!');return;}document.getElementById('ratingModal').classList.remove('show');showToast(`${star} estrelas enviadas! ⭐ Obrigado!`);setTimeout(()=>window.location.href='home.html',1800);}
+</script>
+</body>
+</html>

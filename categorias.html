@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Categorias — Quebra Galho</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="icon" type="image/png" href="assets/icon.png">
+  <style>
+    .all-cats-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
+    .big-cat-card {
+      background: var(--surface); border-radius: var(--r-lg); border: 1px solid var(--border);
+      padding: 20px 16px; display: flex; flex-direction: column; gap: 10px; cursor: pointer;
+      transition: all .22s; text-decoration: none; color: var(--text); box-shadow: var(--shadow-sm);
+    }
+    .big-cat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .big-cat-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+    .big-cat-name { font-size: 15px; font-weight: 700; }
+    .big-cat-count { font-size: 12px; color: var(--text-2); }
+
+    /* ---- SUBCATEGORY VERTICAL LIST ---- */
+    .sub-list-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 16px 12px 0;
+      border-bottom: 1px solid var(--border);
+      text-decoration: none;
+      color: var(--text);
+      transition: all .18s;
+    }
+    .sub-list-item:last-child { border-bottom: none; }
+    .sub-list-item:hover { color: var(--primary); }
+    .sub-list-img {
+      width: 72px; height: 58px;
+      border-radius: 12px;
+      object-fit: cover;
+      background: var(--surface-2);
+      flex-shrink: 0;
+    }
+    .sub-list-body { flex: 1; }
+    .sub-list-name { font-size: 14px; font-weight: 600; }
+    .sub-list-count { font-size: 12px; color: var(--text-2); margin-top: 3px; }
+    .sub-list-arrow { color: var(--text-3); font-size: 12px; }
+    .sub-list-item:hover .sub-list-arrow { color: var(--primary); }
+    .sub-list-item:hover .sub-list-name { color: var(--primary); }
+
+    .sub-cat-header {
+      display: flex; align-items: center; gap: 14px;
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sub-cat-hdr-icon { width: 52px; height: 52px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+    .sub-cat-hdr-name { font-size: 20px; font-weight: 700; }
+    .sub-cat-hdr-desc { font-size: 13px; color: var(--text-2); margin-top: 3px; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ALL CATEGORIES VIEW -->
+  <div id="allView">
+    <div class="page-header">
+      <a href="home.html" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+      <div class="page-header-title">Categorias</div>
+    </div>
+    <div class="page-content" style="padding-top:0">
+      <div class="section"><div class="all-cats-grid" id="allCatsGrid"></div></div>
+    </div>
+  </div>
+
+  <!-- SUBCATEGORY VIEW -->
+  <div id="subView" style="display:none">
+    <div class="page-header">
+      <button class="back-btn" onclick="goBack()"><i class="fa-solid fa-chevron-left"></i></button>
+      <div class="page-header-title" id="subHeaderTitle">Subcategorias</div>
+    </div>
+    <div class="page-content" style="padding-top:0">
+      <div class="sub-cat-header">
+        <div id="subIconBig" class="sub-cat-hdr-icon"></div>
+        <div>
+          <div class="sub-cat-hdr-name" id="subNameBig"></div>
+          <div class="sub-cat-hdr-desc" id="subDescBig"></div>
+        </div>
+      </div>
+      <div style="padding:0 20px">
+        <div id="subGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a class="nav-item" href="home.html"><i class="fa-solid fa-house"></i><span>Início</span></a>
+    <a class="nav-item active" href="categorias.html"><i class="fa-solid fa-screwdriver-wrench"></i><span>Serviços</span></a>
+    <a class="nav-item nav-center-wrap" href="receber.html">
+      <div class="nav-fab"><i class="fa-solid fa-bolt"></i></div><span>Receber</span>
+    </a>
+    <a class="nav-item" href="ganhos.html"><i class="fa-solid fa-chart-line"></i><span>Ganhos</span></a>
+    <a class="nav-item" href="perfil-usuario.html"><i class="fa-solid fa-user"></i><span>Perfil</span></a>
+  </nav>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+/* Imagens por subcategoria — IDs verificados do Unsplash */
+const U = 'https://images.unsplash.com/photo-';
+const S = '?w=144&h=116&fit=crop&q=80';
+const subImages = {
+  // HIDRÁULICA
+  'Vazamento':             U+'1585771724684-38269d6639fd'+S,
+  'Instalação de Torneira':U+'1504196606672-aef5c9cefc92'+S,
+  'Desentupimento':        U+'1585771724684-38269d6639fd'+S+'&crop=right',
+  'Aquecedor':             U+'1504196606672-aef5c9cefc92'+S+'&crop=bottom',
+  "Caixa d'água":          U+'1563453392212-326f5e854473'+S,
+  'Conserto de Vaso':      U+'1563453392212-326f5e854473'+S+'&crop=top',
+
+  // ELÉTRICA
+  'Tomada / Interruptor':  U+'1565814636199-ae8133055c1c'+S,
+  'Instalação de Luminária':U+'1565814636199-ae8133055c1c'+S+'&crop=left',
+  'Disjuntor':             U+'1621905251189-08b45d6a269e'+S,
+  'Chuveiro Elétrico':     U+'1563453392212-326f5e854473'+S+'&crop=entropy',
+  'Câmeras de Segurança':  U+'1621905251189-08b45d6a269e'+S+'&crop=right',
+  'Rede Elétrica':         U+'1565814636199-ae8133055c1c'+S+'&crop=bottom',
+
+  // PINTURA
+  'Pintura Interna':       U+'1562259929-b4e1fd3aef09'+S,
+  'Pintura Externa':       U+'1504307651254-35680f356dfd'+S+'&crop=top',
+  'Pintura de Teto':       U+'1562259929-b4e1fd3aef09'+S+'&crop=bottom',
+  'Pintura de Muro':       U+'1562259929-b4e1fd3aef09'+S+'&crop=right',
+  'Textura / Grafiato':    U+'1504307651254-35680f356dfd'+S+'&crop=entropy',
+  'Impermeabilização':     U+'1504307651254-35680f356dfd'+S,
+
+  // REFORMAS
+  'Piso / Cerâmica':       U+'1504307651254-35680f356dfd'+S+'&crop=bottom',
+  'Drywall / Gesso':       U+'1504307651254-35680f356dfd'+S+'&crop=left',
+  'Janelas / Portas':      U+'1504307651254-35680f356dfd'+S+'&crop=right',
+  'Telhado':               U+'1504307651254-35680f356dfd'+S+'&crop=top',
+  'Calçada / Muro':        U+'1585771724684-38269d6639fd'+S+'&crop=top',
+  'Reforma Completa':      U+'1504307651254-35680f356dfd'+S+'&crop=entropy',
+
+  // IDOSOS
+  'Acompanhamento Médico': U+'1576765608622-067973a79f53'+S,
+  'Passeio / Compras':     U+'1516534775068-ba3e7458af70'+S,
+  'Medicamentos':          U+'1576765608622-067973a79f53'+S+'&crop=bottom',
+  'Fisioterapia em Casa':  U+'1576765608622-067973a79f53'+S+'&crop=top',
+  'Cuidado Noturno':       U+'1516534775068-ba3e7458af70'+S+'&crop=bottom',
+  'Lazer / Companhia':     U+'1516534775068-ba3e7458af70'+S+'&crop=top',
+
+  // TRANSPORTE
+  'Escolar (Crianças)':    U+'1449965408869-eaa3f722e40d'+S+'&crop=top',
+  'Aeroporto / Rodoviária':U+'1436491865332-7a61a109cc05'+S,
+  'Médico / Hospital':     U+'1449965408869-eaa3f722e40d'+S+'&crop=bottom',
+  'Compras Pesadas':       U+'1449965408869-eaa3f722e40d'+S+'&crop=right',
+  'Passeios':              U+'1449965408869-eaa3f722e40d'+S,
+  'Moto Express':          U+'1449965408869-eaa3f722e40d'+S+'&crop=left',
+
+  // LIMPEZA
+  'Limpeza Residencial':   U+'1581578731548-c64695cc6952'+S,
+  'Limpeza Pós-obra':      U+'1581578731548-c64695cc6952'+S+'&crop=bottom',
+  'Limpeza Comercial':     U+'1581578731548-c64695cc6952'+S+'&crop=top',
+  'Lavanderia':            U+'1581578731548-c64695cc6952'+S+'&crop=left',
+  'Passadoria':            U+'1581578731548-c64695cc6952'+S+'&crop=right',
+  'Dedetização':           U+'1581578731548-c64695cc6952'+S+'&crop=entropy',
+
+  // DIGITAL
+  'Criação de Site':          U+'1498050108023-c5249f4df085'+S,
+  'Design Gráfico':           U+'1498050108023-c5249f4df085'+S+'&crop=bottom',
+  'Gestão de Redes Sociais':  U+'1498050108023-c5249f4df085'+S+'&crop=top',
+  'Suporte de TI':            U+'1498050108023-c5249f4df085'+S+'&crop=left',
+  'Edição de Vídeo':          U+'1498050108023-c5249f4df085'+S+'&crop=right',
+  'Planilhas / Excel':        U+'1547658719-da2b51169166'+S,
+};
+
+const iconMap = {
+  hidraulica: {icon:'fa-droplet',color:'#1E88E5',bg:'#E3F2FD'},
+  eletrica:   {icon:'fa-bolt',   color:'#FF8F00',bg:'#FFF8E1'},
+  pintura:    {icon:'fa-paint-roller',color:'#8E24AA',bg:'#F3E5F5'},
+  reformas:   {icon:'fa-hammer', color:'#6D4C41',bg:'#EFEBE9'},
+  idosos:     {icon:'fa-heart',  color:'#E53935',bg:'#FFEBEE'},
+  transporte: {icon:'fa-car',    color:'#00BFA5',bg:'#E0F7F4'},
+  limpeza:    {icon:'fa-broom',  color:'#43A047',bg:'#E8F5E9'},
+  digital:    {icon:'fa-laptop-code',color:'#546E7A',bg:'#ECEFF1'},
+};
+
+const descMap = {
+  hidraulica:'Vazamentos, instalações e desentupimentos',
+  eletrica:'Instalações e reparos elétricos',
+  pintura:'Pintura interna, externa e texturas',
+  reformas:'Piso, gesso e reformas completas',
+  idosos:'Acompanhamento e cuidados para idosos',
+  transporte:'Corridas, escolar e acompanhamento',
+  limpeza:'Limpeza residencial e pós-obra',
+  digital:'Sites, design e serviços online',
+};
+
+const counts = {hidraulica:8,eletrica:5,pintura:4,reformas:6,idosos:3,transporte:7,limpeza:9,digital:5};
+
+/* Render all categories grid */
+const grid = document.getElementById('allCatsGrid');
+CATEGORIES.forEach(cat => {
+  const inf = iconMap[cat.id];
+  grid.innerHTML += `
+    <div class="big-cat-card slide-up" onclick="openCat('${cat.id}')">
+      <div class="big-cat-icon" style="background:${inf.bg};color:${inf.color}">
+        <i class="fa-solid ${inf.icon}"></i>
+      </div>
+      <div>
+        <div class="big-cat-name">${cat.name}</div>
+        <div class="big-cat-count">${counts[cat.id]||4} profissionais</div>
+      </div>
+      <div style="color:var(--text-3);font-size:13px"><i class="fa-solid fa-arrow-right"></i></div>
+    </div>`;
+});
+
+/* Handle URL param */
+const urlCat = getParam('cat');
+if (urlCat) openCat(urlCat);
+
+function openCat(id) {
+  const cat = CATEGORIES.find(c => c.id === id);
+  const inf = iconMap[id];
+  if (!cat || !inf) return;
+
+  document.getElementById('allView').style.display = 'none';
+  document.getElementById('subView').style.display = 'block';
+  document.getElementById('subHeaderTitle').textContent = cat.name;
+  document.getElementById('subNameBig').textContent = cat.name;
+  document.getElementById('subDescBig').textContent = descMap[id] || '';
+
+  const iconEl = document.getElementById('subIconBig');
+  iconEl.innerHTML = `<i class="fa-solid ${inf.icon}"></i>`;
+  iconEl.style.background = inf.bg;
+  iconEl.style.color = inf.color;
+
+  const subs = SUBCATEGORIES[id] || [];
+  const sg = document.getElementById('subGrid');
+  sg.innerHTML = '';
+
+  /* Fallback image per category */
+  const fallbacks = {
+    hidraulica: 'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=144&h=116&fit=crop&q=80',
+    eletrica:   'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=144&h=116&fit=crop&q=80',
+    pintura:    'https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=144&h=116&fit=crop&q=80',
+    reformas:   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=144&h=116&fit=crop&q=80',
+    idosos:     'https://images.unsplash.com/photo-1576765608622-067973a79f53?w=144&h=116&fit=crop&q=80',
+    transporte: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=144&h=116&fit=crop&q=80',
+    limpeza:    'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=144&h=116&fit=crop&q=80',
+    digital:    'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=144&h=116&fit=crop&q=80',
+  };
+
+  subs.forEach((s, i) => {
+    const imgUrl = subImages[s] || fallbacks[id];
+    const proCount = Math.floor(Math.random() * 5) + 2;
+    sg.innerHTML += `
+      <a href="profissionais.html?cat=${id}&sub=${encodeURIComponent(s)}"
+         class="sub-list-item slide-up" style="animation-delay:${i * .06}s">
+        <img src="${imgUrl}" class="sub-list-img" alt="${s}"
+             data-fb="${fallbacks[id]}"
+             onerror="if(!this.tried){this.tried=1;this.src=this.dataset.fb;}else{this.style.background='var(--surface-2)';this.removeAttribute('src');}">
+        <div class="sub-list-body">
+          <div class="sub-list-name">${s}</div>
+          <div class="sub-list-count">${proCount} profissionais disponíveis</div>
+        </div>
+        <i class="fa-solid fa-chevron-right sub-list-arrow"></i>
+      </a>`;
+  });
+}
+
+function goBack() {
+  document.getElementById('allView').style.display = '';
+  document.getElementById('subView').style.display = 'none';
+}
+</script>
+</body>
+</html>

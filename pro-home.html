@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Área do Profissional — Quebra Galho</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="icon" type="image/png" href="assets/icon.png">
+  <style>
+    .pro-area-header {
+      background: var(--navy);
+      padding: 52px 20px 24px;
+      border-radius: 0 0 28px 28px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 28px rgba(16,42,67,0.35);
+    }
+    .pro-area-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 90% 8%,  rgba(255,255,255,0.10) 0%, transparent 45%),
+        radial-gradient(circle at 5%  92%, rgba(255,255,255,0.06) 0%, transparent 40%),
+        radial-gradient(circle at 55% 50%, rgba(0,194,168,0.08)  0%, transparent 60%);
+      pointer-events: none;
+    }
+    .pro-area-header > * { position: relative; z-index: 1; }
+
+    .pro-hdr-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    .pro-hdr-left { display: flex; align-items: center; gap: 12px; }
+    .pro-avatar { width: 48px; height: 48px; border-radius: 50%; border: 2.5px solid rgba(255,255,255,0.5); object-fit: cover; background: rgba(255,255,255,0.15); }
+    .pro-hdr-name { font-size: 16px; font-weight: 600; color: white; }
+    .pro-hdr-spec { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 1px; }
+    .pro-hdr-right { display: flex; align-items: center; gap: 10px; }
+    .pro-notif-btn { width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,0.12); border: none; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 15px; position: relative; }
+    .pro-notif-dot { position: absolute; top: 4px; right: 4px; width: 9px; height: 9px; background: #FF7A00; border-radius: 50%; border: 2px solid var(--navy); }
+
+    .online-toggle-wrap { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.09); border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; padding: 12px 16px; }
+    .online-dot { width: 10px; height: 10px; border-radius: 50%; background: #69F0AE; box-shadow: 0 0 8px rgba(105,240,174,0.8); flex-shrink: 0; transition: all .3s; }
+    .online-dot.offline { background: #90A4AE; box-shadow: none; }
+    .online-label { flex: 1; font-size: 13px; font-weight: 500; color: white; }
+    .online-label span { font-size: 11px; display: block; color: rgba(255,255,255,0.5); margin-top: 1px; }
+    .online-switch { width: 44px; height: 24px; background: rgba(255,255,255,0.15); border-radius: 12px; position: relative; cursor: pointer; transition: all .3s; border: none; }
+    .online-switch.on { background: #69F0AE; }
+    .online-switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; background: white; border-radius: 50%; transition: all .3s; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+    .online-switch.on::after { transform: translateX(20px); }
+
+    .today-card {
+      background: var(--surface);
+      border-radius: var(--r-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .today-top { padding: 16px 16px 12px; border-bottom: 1px solid var(--border); }
+    .today-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--text-3); margin-bottom: 8px; }
+    .today-amount { font-size: 30px; font-weight: 700; color: var(--primary); letter-spacing: -1px; }
+    .today-sub { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+    .today-stats { display: flex; }
+    .today-stat { flex: 1; padding: 12px 16px; border-right: 1px solid var(--border); text-align: center; }
+    .today-stat:last-child { border-right: none; }
+    .today-stat-val { font-size: 20px; font-weight: 700; }
+    .today-stat-label { font-size: 10.5px; color: var(--text-2); margin-top: 2px; }
+
+    .job-card {
+      background: var(--surface);
+      border-radius: var(--r-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 16px;
+      margin-bottom: 12px;
+      transition: all .22s;
+    }
+    .job-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+    .job-card-top { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+    .job-cat-icon { width: 44px; height: 44px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .job-card-title { font-size: 14px; font-weight: 600; }
+    .job-card-sub { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+    .job-card-badges { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+
+    .job-client { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; padding: 8px 10px; background: var(--surface-2); border-radius: 10px; }
+    .job-client-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--primary); background: var(--surface-3); }
+    .job-client-name { font-size: 12px; font-weight: 600; }
+    .job-client-meta { font-size: 11px; color: var(--text-2); }
+    .job-meta-row { display: flex; gap: 14px; margin-bottom: 12px; flex-wrap: wrap; }
+    .job-meta-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-2); }
+    .job-meta-item i { color: var(--primary); font-size: 11px; }
+    .job-actions { display: flex; gap: 8px; }
+    .job-btn-decline { flex: 1; padding: 10px; border-radius: 10px; border: 1.5px solid var(--border); background: transparent; color: var(--text-2); font-family: var(--font); font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s; }
+    .job-btn-decline:hover { border-color: #F44336; color: #F44336; }
+    .job-btn-accept { flex: 2; padding: 10px; border-radius: 10px; border: none; background: var(--primary); color: white; font-family: var(--font); font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .job-btn-accept:hover { background: var(--primary-dark); }
+
+    .urgency-badge { background: #FFEBEE; color: #E53935; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
+    .new-badge { background: var(--primary-light); color: var(--primary); font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
+
+    /* PRO NAV */
+    .pro-nav-label { font-size: 10px; font-weight: 500; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="pro-area-header">
+    <div class="pro-hdr-row">
+      <div class="pro-hdr-left">
+        <img src="https://ui-avatars.com/api/?name=Roberto+Alves&background=1565C8&color=fff&size=128&bold=true" class="pro-avatar" alt="Roberto" id="proAvatar">
+        <div>
+          <div class="pro-hdr-name" id="proName">Roberto Alves</div>
+          <div class="pro-hdr-spec" id="proSpec">Hidráulico • Top Pro ⭐</div>
+        </div>
+      </div>
+      <div class="pro-hdr-right">
+        <button class="pro-notif-btn" onclick="showToast('3 novas notificações!')">
+          <i class="fa-solid fa-bell"></i>
+          <div class="pro-notif-dot"></div>
+        </button>
+        <a href="index.html" class="pro-notif-btn" title="Sair">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </a>
+      </div>
+    </div>
+    <!-- ONLINE TOGGLE -->
+    <div class="online-toggle-wrap">
+      <div class="online-dot" id="onlineDot"></div>
+      <div class="online-label">
+        <span id="onlineLabel">Online — recebendo chamadas</span>
+        <span id="onlineSub">Profissionais próximos te veem</span>
+      </div>
+      <button class="online-switch on" id="onlineSwitch" onclick="toggleOnline()"></button>
+    </div>
+  </div>
+
+  <div class="page-content" style="padding-top:0">
+
+    <!-- HOJE -->
+    <div class="section">
+      <div class="section-title" style="margin-bottom:12px">Hoje</div>
+      <div class="today-card">
+        <div class="today-top">
+          <div class="today-label">Ganhos hoje</div>
+          <div class="today-amount">R$ 320,00</div>
+          <div class="today-sub"><i class="fa-solid fa-arrow-up" style="color:var(--primary);font-size:10px"></i> R$ 120 a mais que ontem</div>
+        </div>
+        <div class="today-stats">
+          <div class="today-stat"><div class="today-stat-val" style="color:var(--primary)">3</div><div class="today-stat-label">Serviços</div></div>
+          <div class="today-stat"><div class="today-stat-val" style="color:#FFB300">4.9</div><div class="today-stat-label">Avaliação</div></div>
+          <div class="today-stat"><div class="today-stat-val" style="color:#43A047">98%</div><div class="today-stat-label">Conclusão</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- CHAMADAS DISPONÍVEIS -->
+    <div class="section">
+      <div class="section-header" style="margin-bottom:16px">
+        <div class="section-title">Chamadas disponíveis</div>
+        <span class="badge" style="background:var(--primary-light);color:var(--primary);font-size:11px">4 novas</span>
+      </div>
+      <div id="jobList"></div>
+    </div>
+
+  </div>
+
+  <!-- PRO BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <a class="nav-item active" href="pro-home.html"><i class="fa-solid fa-house"></i><span>Início</span></a>
+    <a class="nav-item" href="pro-ganhos.html"><i class="fa-solid fa-chart-line"></i><span>Ganhos</span></a>
+    <a class="nav-item nav-center-wrap" href="#" onclick="showToast('📸 Envie foto do serviço!');return false">
+      <div class="nav-fab"><i class="fa-solid fa-camera"></i></div><span>Foto</span>
+    </a>
+    <a class="nav-item" href="pro-historico.html" onclick="event.preventDefault();showToast('Histórico em breve!')"><i class="fa-solid fa-clipboard-list"></i><span>Histórico</span></a>
+    <a class="nav-item" href="perfil-usuario.html"><i class="fa-solid fa-user"></i><span>Perfil</span></a>
+  </nav>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+let online = true;
+
+function toggleOnline() {
+  online = !online;
+  const dot    = document.getElementById('onlineDot');
+  const sw     = document.getElementById('onlineSwitch');
+  const lbl    = document.getElementById('onlineLabel');
+  const sub    = document.getElementById('onlineSub');
+  sw.classList.toggle('on', online);
+  dot.classList.toggle('offline', !online);
+  lbl.textContent = online ? 'Online — recebendo chamadas' : 'Offline — invisível no app';
+  sub.textContent = online ? 'Profissionais próximos te veem' : 'Ative para receber novos pedidos';
+  showToast(online ? '🟢 Você está online!' : '⚫ Você está offline');
+}
+
+const jobs = [
+  {
+    id: 'J-4821',
+    cat: 'Hidráulica', catIcon: 'fa-droplet', catColor: '#1E88E5', catBg: '#E3F2FD',
+    title: 'Vazamento na pia da cozinha',
+    desc: 'Torneira pingando e tubo embaixo da pia com vazamento. Urgente!',
+    client: 'Marcela T.', clientAvatar: 'https://ui-avatars.com/api/?name=Marcela+T&background=E91E63&color=fff&size=80',
+    dist: '1.2 km', time: 'Hoje, às 14h', price: 'R$ 80–120', urgent: true
+  },
+  {
+    id: 'J-4819',
+    cat: 'Hidráulica', catIcon: 'fa-droplet', catColor: '#1E88E5', catBg: '#E3F2FD',
+    title: 'Instalação de torneira nova',
+    desc: 'Comprei torneira nova e preciso instalar no banheiro. Material já tenho.',
+    client: 'André S.', clientAvatar: 'https://ui-avatars.com/api/?name=Andre+S&background=1976D2&color=fff&size=80',
+    dist: '2.8 km', time: 'Amanhã', price: 'R$ 60–100', urgent: false
+  },
+  {
+    id: 'J-4815',
+    cat: 'Hidráulica', catIcon: 'fa-droplet', catColor: '#1E88E5', catBg: '#E3F2FD',
+    title: 'Desentupimento banheiro',
+    desc: 'Vaso sanitário entupido há 2 dias. Preciso resolver hoje mesmo.',
+    client: 'Claudia M.', clientAvatar: 'https://ui-avatars.com/api/?name=Claudia+M&background=7B1FA2&color=fff&size=80',
+    dist: '0.6 km', time: 'Hoje', price: 'R$ 100–150', urgent: true
+  },
+  {
+    id: 'J-4810',
+    cat: 'Hidráulica', catIcon: 'fa-droplet', catColor: '#1E88E5', catBg: '#E3F2FD',
+    title: 'Revisão aquecedor a gás',
+    desc: 'Aquecedor não liga direito, precisa de revisão e limpeza.',
+    client: 'Fernando B.', clientAvatar: 'https://ui-avatars.com/api/?name=Fernando+B&background=00796B&color=fff&size=80',
+    dist: '3.5 km', time: 'Essa semana', price: 'R$ 150–200', urgent: false
+  },
+];
+
+const list = document.getElementById('jobList');
+jobs.forEach((j, idx) => {
+  list.innerHTML += `
+    <div class="job-card slide-up" style="animation-delay:${idx*.08}s" id="job-${j.id}">
+      <div class="job-card-top">
+        <div class="job-cat-icon" style="background:${j.catBg};color:${j.catColor}"><i class="fa-solid ${j.catIcon}"></i></div>
+        <div style="flex:1">
+          <div class="job-card-title">${j.title}</div>
+          <div class="job-card-sub">${j.id}</div>
+        </div>
+        <div class="job-card-badges">
+          ${j.urgent ? '<span class="urgency-badge">Urgente</span>' : ''}
+          <span class="new-badge">Novo</span>
+        </div>
+      </div>
+      <div class="job-client">
+        <img src="${j.clientAvatar}" class="job-client-avatar" alt="${j.client}">
+        <div>
+          <div class="job-client-name">${j.client}</div>
+          <div class="job-client-meta">Cliente verificado</div>
+        </div>
+      </div>
+      <p style="font-size:13px;color:var(--text-2);margin-bottom:10px;line-height:1.55">${j.desc}</p>
+      <div class="job-meta-row">
+        <div class="job-meta-item"><i class="fa-solid fa-location-dot"></i>${j.dist}</div>
+        <div class="job-meta-item"><i class="fa-solid fa-clock"></i>${j.time}</div>
+        <div class="job-meta-item"><i class="fa-solid fa-tag"></i><strong style="color:var(--primary)">${j.price}</strong></div>
+      </div>
+      <div class="job-actions">
+        <button class="job-btn-decline" onclick="declineJob('${j.id}')"><i class="fa-solid fa-xmark"></i> Recusar</button>
+        <button class="job-btn-accept" onclick="acceptJob('${j.id}','${j.title}')"><i class="fa-solid fa-check"></i> Aceitar chamada</button>
+      </div>
+    </div>`;
+});
+
+function acceptJob(id, title) {
+  const card = document.getElementById('job-' + id);
+  if (card) {
+    card.style.border = '2px solid var(--primary)';
+    card.innerHTML = `
+      <div style="text-align:center;padding:16px;color:var(--primary)">
+        <i class="fa-solid fa-circle-check" style="font-size:36px;margin-bottom:10px;display:block"></i>
+        <div style="font-size:15px;font-weight:700">Chamada aceita!</div>
+        <div style="font-size:13px;color:var(--text-2);margin-top:4px">${title}</div>
+        <a href="acompanhamento.html" class="btn btn-primary btn-sm" style="margin-top:12px;display:inline-flex">
+          <i class="fa-solid fa-map-location-dot"></i> Acompanhar serviço
+        </a>
+      </div>`;
+    showToast('✅ Chamada aceita! O cliente foi notificado.');
+  }
+}
+
+function declineJob(id) {
+  const card = document.getElementById('job-' + id);
+  if (card) {
+    card.style.opacity = '0';
+    card.style.transform = 'translateX(-20px)';
+    card.style.transition = 'all .4s ease';
+    setTimeout(() => card.remove(), 400);
+    showToast('Chamada recusada.');
+  }
+}
+</script>
+</body>
+</html>

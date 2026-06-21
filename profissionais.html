@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Profissionais — Quebra Galho</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+<div class="app">
+
+  <div class="page-header">
+    <button class="back-btn" onclick="history.back()"><i class="fa-solid fa-chevron-left"></i></button>
+    <div class="page-header-title" id="pageTitle">Profissionais</div>
+    <button class="icon-btn" onclick="showToast('Filtros avançados em breve!')" style="background:var(--surface-2);border:none;width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:14px;color:var(--primary)">
+      <i class="fa-solid fa-sliders"></i>
+    </button>
+  </div>
+
+  <!-- Cat banner -->
+  <div id="catHeader" style="display:none; padding:14px 20px; background:var(--surface); border-bottom:1px solid var(--border); align-items:center; gap:12px;">
+    <div id="catHeaderIcon" style="width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;"></div>
+    <div>
+      <div style="font-size:17px;font-weight:800" id="catHeaderTitle"></div>
+      <div style="font-size:12px;color:var(--text-2)" id="catHeaderSub"></div>
+    </div>
+  </div>
+
+  <!-- Sort chips -->
+  <div style="display:flex;gap:8px;padding:12px 20px;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;">
+    <div class="chip active" onclick="sortBy('avaliacao',this)"><i class="fa-solid fa-star"></i> Avaliação</div>
+    <div class="chip" onclick="sortBy('distancia',this)"><i class="fa-solid fa-location-dot"></i> Distância</div>
+    <div class="chip" onclick="sortBy('preco',this)"><i class="fa-solid fa-tag"></i> Menor preço</div>
+    <div class="chip" onclick="sortBy('servicos',this)"><i class="fa-solid fa-briefcase"></i> + Serviços</div>
+  </div>
+
+  <!-- List -->
+  <div class="page-content" style="padding-top:0">
+    <div style="font-size:13px;color:var(--text-2);padding:12px 20px 4px;font-weight:500" id="prosCount"></div>
+    <div style="padding:8px 20px 0;display:flex;flex-direction:column;gap:12px" id="prosList"></div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <a class="nav-item" href="home.html" data-page="home">
+      <i class="fa-solid fa-house"></i><span>Início</span>
+    </a>
+    <a class="nav-item active" href="categorias.html" data-page="servicos">
+      <i class="fa-solid fa-screwdriver-wrench"></i><span>Serviços</span>
+    </a>
+    <a class="nav-item nav-center-wrap" href="receber.html" data-page="receber">
+      <div class="nav-fab"><i class="fa-solid fa-bolt"></i></div>
+      <span>Receber</span>
+    </a>
+    <a class="nav-item" href="ganhos.html" data-page="ganhos">
+      <i class="fa-solid fa-chart-line"></i><span>Ganhos</span>
+    </a>
+    <a class="nav-item" href="perfil-usuario.html" data-page="perfil">
+      <i class="fa-solid fa-user"></i><span>Perfil</span>
+    </a>
+  </nav>
+
+</div>
+<script src="js/app.js"></script>
+<script>
+const catIconMap = {
+  hidraulica:{icon:'fa-droplet',color:'#1E88E5',bg:'#E3F2FD'},
+  eletrica:{icon:'fa-bolt',color:'#FF8F00',bg:'#FFF8E1'},
+  pintura:{icon:'fa-paint-roller',color:'#8E24AA',bg:'#F3E5F5'},
+  reformas:{icon:'fa-hammer',color:'#6D4C41',bg:'#EFEBE9'},
+  idosos:{icon:'fa-heart',color:'#E53935',bg:'#FFEBEE'},
+  transporte:{icon:'fa-car',color:'#00BFA5',bg:'#E0F7F4'},
+  limpeza:{icon:'fa-broom',color:'#43A047',bg:'#E8F5E9'},
+  digital:{icon:'fa-laptop-code',color:'#546E7A',bg:'#ECEFF1'},
+};
+
+const catId = getParam('cat') || '';
+const subId = getParam('sub') || '';
+let currentPros = catId ? PROFESSIONALS.filter(p => p.category === catId) : [...PROFESSIONALS];
+
+if (catId) {
+  const cat = getCat(catId);
+  const iconInfo = catIconMap[catId];
+  document.getElementById('pageTitle').textContent = subId || (cat ? cat.name : 'Profissionais');
+  const hdr = document.getElementById('catHeader');
+  hdr.style.display = 'flex';
+  document.getElementById('catHeaderIcon').innerHTML = `<i class="fa-solid ${iconInfo.icon}"></i>`;
+  document.getElementById('catHeaderIcon').style.background = iconInfo.bg;
+  document.getElementById('catHeaderIcon').style.color = iconInfo.color;
+  document.getElementById('catHeaderTitle').textContent = subId || (cat ? cat.name : '');
+  document.getElementById('catHeaderSub').textContent = subId ? `Categoria: ${cat ? cat.name : ''}` : 'Todos os profissionais';
+}
+
+function renderPros(pros) {
+  document.getElementById('prosCount').textContent = `${pros.length} profissional${pros.length !== 1 ? 'is' : ''} encontrado${pros.length !== 1 ? 's' : ''}`;
+  const list = document.getElementById('prosList');
+  list.innerHTML = '';
+  pros.forEach((pro, i) => {
+    list.innerHTML += `
+      <div class="pro-card slide-up" style="animation-delay:${i*0.06}s">
+        <div class="pro-card-inner">
+          <img src="${pro.avatar}" class="pro-avatar" alt="${pro.name}" onerror="this.style.background='var(--primary-light)'">
+          <div class="pro-info">
+            <div class="pro-name">${pro.name}<span class="badge ${pro.badgeType}" style="font-size:10px">${pro.badge}</span></div>
+            <div class="pro-specialty">${pro.specialty}</div>
+            <div class="pro-meta">
+              ${renderStars(pro.rating)}
+              <span style="font-weight:700;color:var(--text)">${pro.rating}</span>
+              <span style="color:var(--text-3)">(${pro.reviews})</span>
+              <span class="pro-meta-item"><i class="fa-solid fa-location-dot" style="color:var(--primary)"></i>${pro.distance}</span>
+            </div>
+            <div class="pro-meta" style="margin-top:4px">
+              <span class="pro-meta-item"><i class="fa-solid fa-briefcase" style="color:var(--text-3)"></i>${pro.services} serviços</span>
+              <span class="pro-meta-item"><i class="fa-solid fa-clock" style="color:var(--text-3)"></i>${pro.responseTime}</span>
+            </div>
+            <div class="pro-price">${pro.price}${pro.priceUnit}</div>
+          </div>
+        </div>
+        <div class="pro-card-footer">
+          <a href="perfil-pro.html?id=${pro.id}" class="btn btn-outline btn-sm" style="flex:1"><i class="fa-solid fa-user"></i> Ver perfil</a>
+          <a href="solicitar.html?id=${pro.id}" class="btn btn-primary btn-sm" style="flex:1"><i class="fa-solid fa-check"></i> Contratar</a>
+        </div>
+      </div>`;
+  });
+}
+
+function sortBy(type, el) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  let s = [...currentPros];
+  if (type==='avaliacao') s.sort((a,b)=>b.rating-a.rating);
+  if (type==='distancia') s.sort((a,b)=>parseFloat(a.distance)-parseFloat(b.distance));
+  if (type==='preco')     s.sort((a,b)=>parseInt(a.price.replace(/\D+/,''))-parseInt(b.price.replace(/\D+/,'')));
+  if (type==='servicos')  s.sort((a,b)=>b.services-a.services);
+  renderPros(s);
+}
+
+renderPros(currentPros);
+</script>
+</body>
+</html>

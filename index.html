@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Quebra Galho — APP Solucionador</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body { overflow: hidden; }
+
+    .splash {
+      min-height: 100vh;
+      background: #03b09f;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      padding: 48px 0 40px;
+    }
+
+    .splash-circle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.07);
+    }
+    .sc1 { width: 320px; height: 320px; top: -100px; right: -80px; }
+    .sc2 { width: 200px; height: 200px; bottom: 60px; left: -60px; }
+    .sc3 { width: 100px; height: 100px; top: 40%; left: 10%; opacity: 0.5; }
+    .sc4 { width: 60px; height: 60px; top: 20%; right: 15%; opacity: 0.5; }
+
+    .splash-top {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 1;
+      animation: fadeIn 0.8s ease;
+    }
+
+    .splash-logo-wrap {
+      width: 100px;
+      height: 100px;
+      border-radius: 28px;
+      background: rgba(255,255,255,0.18);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.2);
+      animation: logoIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    @keyframes logoIn {
+      from { transform: scale(0.4) rotate(-10deg); opacity: 0; }
+      to   { transform: scale(1) rotate(0); opacity: 1; }
+    }
+
+    .splash-logo-wrap img { width: 70px; height: 70px; }
+
+    .splash-brand-name {
+      font-size: 38px;
+      font-weight: 800;
+      color: white;
+      letter-spacing: -1.5px;
+      text-align: center;
+      animation: slideDown 0.6s ease 0.3s both;
+    }
+
+    .splash-slogan {
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.65);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 4px;
+      text-align: center;
+      animation: slideDown 0.6s ease 0.4s both;
+    }
+
+    .splash-mid {
+      z-index: 1;
+      width: 100%;
+      max-width: 340px;
+      padding: 0 20px;
+      animation: slideUp 0.6s ease 0.5s both;
+    }
+
+    .splash-tagline {
+      font-size: 18px;
+      font-weight: 600;
+      color: white;
+      text-align: center;
+      line-height: 1.55;
+      margin-bottom: 32px;
+    }
+
+    .splash-features {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sf-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(8px);
+      border-radius: 16px;
+      padding: 14px 16px;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .sf-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .sf-text {
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.92);
+      line-height: 1.45;
+    }
+
+    .splash-bottom {
+      z-index: 1;
+      width: 100%;
+      max-width: 340px;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      animation: slideUp 0.6s ease 0.7s both;
+    }
+
+    .btn-splash-primary {
+      width: 100%;
+      padding: 18px;
+      background: white;
+      color: #03b09f;
+      border: none;
+      border-radius: 50px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+      transition: all 0.22s ease;
+    }
+    .btn-splash-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 42px rgba(0,0,0,0.28); }
+
+    .btn-splash-ghost {
+      width: 100%;
+      padding: 16px;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border: 1.5px solid rgba(255,255,255,0.35);
+      border-radius: 50px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.22s ease;
+    }
+    .btn-splash-ghost:hover { background: rgba(255,255,255,0.18); }
+
+    .splash-footer-txt {
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="splash">
+    <div class="splash-circle sc1"></div>
+    <div class="splash-circle sc2"></div>
+    <div class="splash-circle sc3"></div>
+    <div class="splash-circle sc4"></div>
+
+    <!-- TOP -->
+    <div class="splash-top">
+      <div class="splash-logo-wrap">
+        <img src="assets/logo.svg" alt="Quebra Galho">
+      </div>
+      <div class="splash-brand-name">Quebra Galho</div>
+      <div class="splash-slogan">APP Solucionador</div>
+    </div>
+
+    <!-- MEIO -->
+    <div class="splash-mid">
+      <p class="splash-tagline">
+        Todos os serviços que você<br>precisa, em um só lugar.
+      </p>
+      <div class="splash-features">
+        <div class="sf-item">
+          <div class="sf-icon"><i class="fa-solid fa-shield-halved"></i></div>
+          <div class="sf-text">Profissionais verificados com avaliações reais da comunidade</div>
+        </div>
+        <div class="sf-item">
+          <div class="sf-icon"><i class="fa-solid fa-camera"></i></div>
+          <div class="sf-text">Acompanhe o serviço em tempo real com fotos e atualizações</div>
+        </div>
+        <div class="sf-item">
+          <div class="sf-icon"><i class="fa-solid fa-layer-group"></i></div>
+          <div class="sf-text">De reformas a cuidado com idosos — tudo num app só</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM -->
+    <div class="splash-bottom">
+      <a href="home.html" class="btn-splash-primary">
+        <i class="fa-solid fa-user"></i>
+        Entrar como Cliente
+      </a>
+      <a href="pro-home.html" class="btn-splash-ghost">
+        <i class="fa-solid fa-briefcase"></i>
+        Sou Profissional
+      </a>
+      <div class="splash-footer-txt">Quebra Galho © 2026 — Versão 1.0</div>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+function showProAlert() {
+  showToast('Área do profissional chegando em breve! 🚀');
+}
+</script>
+</body>
+</html>

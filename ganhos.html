@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ganhos — Quebra Galho</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="icon" type="image/png" href="assets/icon.png">
+  <style>
+    .ganhos-hdr {
+      background: var(--navy);
+      padding: 52px 20px 28px;
+      border-radius: 0 0 28px 28px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(16,42,67,0.3);
+    }
+    .ganhos-hdr::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 88% 10%, rgba(255,255,255,0.08) 0%, transparent 45%),
+        radial-gradient(circle at 8%  90%, rgba(255,255,255,0.05) 0%, transparent 40%);
+      pointer-events: none;
+    }
+    .ganhos-hdr > * { position: relative; z-index: 1; }
+    .ganhos-hdr-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .ganhos-hdr-title { font-size: 18px; font-weight: 600; color: white; }
+    .ganhos-hdr-sub { font-size: 12px; color: rgba(255,255,255,0.55); }
+
+    .balance-card {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 18px;
+      padding: 18px 20px;
+      backdrop-filter: blur(8px);
+    }
+    .balance-label { font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 6px; }
+    .balance-amount { font-size: 34px; font-weight: 700; color: white; letter-spacing: -1px; }
+    .balance-sub { font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 4px; }
+    .balance-row { display: flex; gap: 10px; margin-top: 14px; }
+    .balance-stat {
+      flex: 1;
+      background: rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+    .balance-stat-label { font-size: 11px; color: rgba(255,255,255,0.5); }
+    .balance-stat-val { font-size: 16px; font-weight: 700; color: white; margin-top: 3px; }
+    .balance-stat-val.green { color: #69F0AE; }
+    .balance-stat-val.orange { color: #FFB74D; }
+
+    .cat-breakdown { display: flex; flex-direction: column; gap: 12px; }
+    .cat-bar-item { display: flex; align-items: center; gap: 12px; }
+    .cat-bar-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+    .cat-bar-body { flex: 1; }
+    .cat-bar-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+    .cat-bar-name { font-size: 13px; font-weight: 500; }
+    .cat-bar-val { font-size: 13px; font-weight: 700; color: var(--primary); }
+    .cat-bar-track { height: 6px; background: var(--surface-2); border-radius: 3px; overflow: hidden; }
+    .cat-bar-fill { height: 100%; background: var(--primary); border-radius: 3px; transition: width 0.8s ease; }
+
+    .tx-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .tx-item:last-child { border-bottom: none; }
+    .tx-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+    .tx-body { flex: 1; }
+    .tx-name { font-size: 13px; font-weight: 600; }
+    .tx-date { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+    .tx-amount { font-size: 15px; font-weight: 700; }
+    .tx-amount.neg { color: #F44336; }
+    .tx-amount.pos { color: #43A047; }
+
+    .cashback-card {
+      background: var(--accent-light);
+      border: 1.5px solid rgba(255,122,0,0.2);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    [data-theme="dark"] .cashback-card { background: rgba(255,122,0,0.08); border-color: rgba(255,122,0,0.15); }
+    .cashback-ic { width: 46px; height: 46px; background: #FF7A00; border-radius: 13px; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; flex-shrink: 0; }
+    .cashback-title { font-size: 14px; font-weight: 600; color: #FF7A00; }
+    .cashback-sub { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <div class="ganhos-hdr">
+    <div class="ganhos-hdr-row">
+      <div>
+        <div class="ganhos-hdr-title">Meu Histórico</div>
+        <div class="ganhos-hdr-sub">Junho 2026</div>
+      </div>
+      <button class="hdr-icon-btn" style="background:rgba(255,255,255,0.12)" onclick="showToast('Exportando relatório...')">
+        <i class="fa-solid fa-download"></i>
+      </button>
+    </div>
+    <div class="balance-card">
+      <div class="balance-label">Total gasto este mês</div>
+      <div class="balance-amount">R$ 565,00</div>
+      <div class="balance-sub"><i class="fa-solid fa-arrow-down" style="color:#69F0AE;font-size:10px"></i> 12% menos que maio</div>
+      <div class="balance-row">
+        <div class="balance-stat">
+          <div class="balance-stat-label">Serviços</div>
+          <div class="balance-stat-val">5</div>
+        </div>
+        <div class="balance-stat">
+          <div class="balance-stat-label">Economizado</div>
+          <div class="balance-stat-val green">R$ 78</div>
+        </div>
+        <div class="balance-stat">
+          <div class="balance-stat-label">Cashback</div>
+          <div class="balance-stat-val orange">R$ 22,60</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content" style="padding-top:0">
+
+    <!-- CASHBACK -->
+    <div class="section">
+      <div class="cashback-card">
+        <div class="cashback-ic"><i class="fa-solid fa-coins"></i></div>
+        <div>
+          <div class="cashback-title">R$ 22,60 em cashback disponível</div>
+          <div class="cashback-sub">Use no próximo serviço e economize!</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- CATEGORIAS -->
+    <div class="section">
+      <div class="section-title" style="margin-bottom:16px">Por categoria</div>
+      <div class="cat-breakdown" id="catBreakdown"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- HISTÓRICO -->
+    <div class="section">
+      <div class="section-header" style="margin-bottom:4px">
+        <div class="section-title">Transações</div>
+        <span class="section-link" onclick="showToast('Ver mais')">Ver todas</span>
+      </div>
+      <div id="txList"></div>
+    </div>
+
+  </div>
+
+  <nav class="bottom-nav">
+    <a class="nav-item" href="home.html"><i class="fa-solid fa-house"></i><span>Início</span></a>
+    <a class="nav-item" href="categorias.html"><i class="fa-solid fa-screwdriver-wrench"></i><span>Serviços</span></a>
+    <a class="nav-item nav-center-wrap" href="receber.html">
+      <div class="nav-fab"><i class="fa-solid fa-bolt"></i></div><span>Receber</span>
+    </a>
+    <a class="nav-item active" href="ganhos.html"><i class="fa-solid fa-chart-line"></i><span>Ganhos</span></a>
+    <a class="nav-item" href="perfil-usuario.html"><i class="fa-solid fa-user"></i><span>Perfil</span></a>
+  </nav>
+</div>
+<script src="js/app.js"></script>
+<script>
+const cats = [
+  { name:'Hidráulica', icon:'fa-droplet', color:'#1E88E5', bg:'#E3F2FD', val:120, pct:78 },
+  { name:'Limpeza',    icon:'fa-broom',   color:'#43A047', bg:'#E8F5E9', val:200, pct:100 },
+  { name:'Elétrica',  icon:'fa-bolt',    color:'#FF8F00', bg:'#FFF8E1', val:180, pct:90 },
+  { name:'Transporte',icon:'fa-car',     color:'#00BFA5', bg:'#E0F7F4', val:65,  pct:40 },
+];
+const cbd = document.getElementById('catBreakdown');
+cats.forEach(c => {
+  cbd.innerHTML += `
+    <div class="cat-bar-item">
+      <div class="cat-bar-icon" style="background:${c.bg};color:${c.color}"><i class="fa-solid ${c.icon}"></i></div>
+      <div class="cat-bar-body">
+        <div class="cat-bar-top"><span class="cat-bar-name">${c.name}</span><span class="cat-bar-val">R$ ${c.val}</span></div>
+        <div class="cat-bar-track"><div class="cat-bar-fill" style="width:${c.pct}%"></div></div>
+      </div>
+    </div>`;
+});
+
+const txs = [
+  { name:'Instalação de torneira', pro:'Roberto Alves', date:'Hoje, 14:30', amount:'-R$ 120,00', icon:'fa-droplet', color:'#1E88E5', bg:'#E3F2FD', neg:true },
+  { name:'Limpeza residencial',    pro:'Fernanda Costa', date:'18 jun, 09:00', amount:'-R$ 200,00', icon:'fa-broom',   color:'#43A047', bg:'#E8F5E9', neg:true },
+  { name:'Cashback aplicado',      pro:'Programa Fidelidade', date:'18 jun', amount:'+R$ 22,60', icon:'fa-coins', color:'#FF7A00', bg:'#FFF0E0', neg:false },
+  { name:'Troca de tomadas',       pro:'Marina Santos',  date:'10 jun, 14:00', amount:'-R$ 180,00', icon:'fa-bolt',   color:'#FF8F00', bg:'#FFF8E1', neg:true },
+  { name:'Consulta médica — mãe',  pro:'João Pedro Lima',date:'5 jun, 10:30', amount:'-R$ 65,00',  icon:'fa-car',    color:'#00BFA5', bg:'#E0F7F4', neg:true },
+];
+const txl = document.getElementById('txList');
+txs.forEach(t => {
+  txl.innerHTML += `
+    <div class="tx-item">
+      <div class="tx-icon" style="background:${t.bg};color:${t.color}"><i class="fa-solid ${t.icon}"></i></div>
+      <div class="tx-body">
+        <div class="tx-name">${t.name}</div>
+        <div class="tx-date">${t.pro} • ${t.date}</div>
+      </div>
+      <div class="tx-amount ${t.neg?'neg':'pos'}">${t.amount}</div>
+    </div>`;
+});
+</script>
+</body>
+</html>

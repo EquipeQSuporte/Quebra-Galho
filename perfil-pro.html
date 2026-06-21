@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Perfil do Profissional — Quebra Galho</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .profile-top {
+      background: var(--surface);
+      padding: 28px 20px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .share-btn {
+      position: absolute;
+      top: 16px; right: 16px;
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: none;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-2); font-size: 15px;
+      cursor: pointer;
+    }
+
+    .fav-btn {
+      position: absolute;
+      top: 16px; right: 62px;
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: none;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-2); font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .fav-btn.active { background: #FFEBEE; color: #E53935; }
+
+    .pro-top-avatar {
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--primary);
+      background: var(--surface-2);
+      margin-bottom: 14px;
+    }
+
+    .pro-top-name { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+    .pro-top-spec { font-size: 14px; color: var(--text-2); margin-bottom: 12px; }
+
+    .pro-top-stats {
+      display: flex;
+      gap: 24px;
+      margin-top: 8px;
+    }
+    .top-stat { text-align: center; }
+    .top-stat-num { font-size: 20px; font-weight: 800; }
+    .top-stat-label { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+
+    .pro-top-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+      width: 100%;
+    }
+
+    .action-btn-sm {
+      flex: 1;
+      padding: 10px;
+      border-radius: var(--r-full);
+      border: 1.5px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text-2);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .action-btn-sm:hover { border-color: var(--primary); color: var(--primary); }
+
+    .rating-summary {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    .rating-big-num {
+      font-size: 48px;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1;
+    }
+    .rating-bars { flex: 1; }
+
+    .verified-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .verified-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      background: #E8F5E9;
+      color: #1B5E20;
+      border-radius: var(--r-full);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    [data-theme="dark"] .verified-item { background: rgba(76,175,80,0.12); color: #81C784; }
+
+    .bottom-cta-spacer { height: 90px; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <div class="page-header" style="border-bottom:none; position:absolute; top:0; left:0; right:0; background:transparent; z-index:50">
+    <button class="back-btn" onclick="history.back()" style="background:rgba(255,255,255,0.9); backdrop-filter:blur(8px); box-shadow:var(--shadow-sm)">
+      <i class="fa-solid fa-chevron-left"></i>
+    </button>
+  </div>
+
+  <div class="page-content" style="padding-top:0; padding-bottom:0">
+
+    <!-- PROFILE TOP -->
+    <div class="profile-top slide-up" id="profileTop">
+      <button class="fav-btn" id="favBtn" onclick="toggleFav()">
+        <i class="fa-solid fa-heart"></i>
+      </button>
+      <button class="share-btn" onclick="showToast('Link copiado! 🔗')">
+        <i class="fa-solid fa-share-nodes"></i>
+      </button>
+
+      <img id="proAvatar" src="" class="pro-top-avatar" alt="Profissional">
+
+      <div id="proBadge" class="badge badge-primary" style="margin-bottom:10px"></div>
+      <div class="pro-top-name" id="proName">—</div>
+      <div class="pro-top-spec" id="proSpec">—</div>
+
+      <div class="rating">
+        <span id="proStars"></span>
+        <span class="rating-num" id="proRatingNum" style="font-size:16px; font-weight:800"></span>
+        <span class="rating-count" id="proReviewsCount"></span>
+      </div>
+
+      <div class="pro-top-stats" id="proStats"></div>
+
+      <div class="pro-top-actions">
+        <button class="action-btn-sm" onclick="showToast('Ligando... 📞')">
+          <i class="fa-solid fa-phone"></i> Ligar
+        </button>
+        <button class="action-btn-sm" onclick="showToast('Abrindo chat... 💬')">
+          <i class="fa-solid fa-message"></i> Mensagem
+        </button>
+        <button class="action-btn-sm" onclick="showToast('Compartilhando... 📤')">
+          <i class="fa-solid fa-share"></i> Indicar
+        </button>
+      </div>
+    </div>
+
+    <!-- VERIFICAÇÕES -->
+    <div class="section">
+      <div class="verified-badges" id="verifiedBadges">
+        <div class="verified-item"><i class="fa-solid fa-shield-check"></i> Identidade verificada</div>
+        <div class="verified-item"><i class="fa-solid fa-star"></i> Top Pro 2025</div>
+        <div class="verified-item"><i class="fa-solid fa-clock"></i> Resposta rápida</div>
+        <div class="verified-item"><i class="fa-solid fa-map-location-dot"></i> Localização confirmada</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- SOBRE -->
+    <div class="section">
+      <div class="section-title" style="margin-bottom:12px">Sobre</div>
+      <p id="proBio" style="color:var(--text-2); line-height:1.7"></p>
+
+      <div style="margin-top:16px" id="infoRows">
+        <div class="info-row">
+          <i class="fa-solid fa-briefcase"></i>
+          <div class="info-row-content">
+            <div class="info-row-label">Serviços realizados</div>
+            <div class="info-row-value" id="infoServices">—</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <i class="fa-solid fa-clock"></i>
+          <div class="info-row-content">
+            <div class="info-row-label">Tempo de resposta</div>
+            <div class="info-row-value" id="infoResponse">—</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <i class="fa-solid fa-check-circle"></i>
+          <div class="info-row-content">
+            <div class="info-row-label">Taxa de conclusão</div>
+            <div class="info-row-value" id="infoCompletion">—</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <i class="fa-solid fa-tag"></i>
+          <div class="info-row-content">
+            <div class="info-row-label">Preço estimado</div>
+            <div class="info-row-value" id="infoPrice" style="color:var(--primary); font-weight:700">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ESPECIALIDADES -->
+    <div class="section">
+      <div class="section-title" style="margin-bottom:12px">Especialidades</div>
+      <div class="skill-tags" id="skillTags"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- AVALIAÇÕES -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Avaliações</div>
+        <span class="section-link">Ver todas</span>
+      </div>
+
+      <div class="rating-summary" style="margin-bottom:20px">
+        <div class="rating-big-num" id="bigRating">—</div>
+        <div class="rating-bars" id="ratingBars"></div>
+      </div>
+
+      <div id="reviewsList"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- FOTOS DO TRABALHO -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Fotos do trabalho</div>
+        <span class="section-link" onclick="showToast('Ver todas as fotos')">Ver todas</span>
+      </div>
+      <div class="photo-grid" id="photoGrid"></div>
+    </div>
+
+    <div class="bottom-cta-spacer"></div>
+  </div>
+
+  <!-- CTA FIXO -->
+  <div class="sticky-footer" id="stickyFooter">
+    <div style="display:flex; gap:10px; align-items:center">
+      <div>
+        <div style="font-size:12px; color:var(--text-2)">A partir de</div>
+        <div style="font-size:18px; font-weight:800; color:var(--primary)" id="footerPrice">—</div>
+      </div>
+      <a id="ctaBtn" href="#" class="btn btn-primary btn-lg" style="flex:1">
+        <i class="fa-solid fa-handshake"></i>
+        Contratar agora
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/app.js"></script>
+<script>
+const proId = getParam('id') || 1;
+const pro   = getPro(proId);
+let isFav   = false;
+
+if (!pro) {
+  document.body.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-user-slash"></i></div><p>Profissional não encontrado</p><a href="home.html" class="btn btn-primary" style="margin-top:12px">Voltar</a></div>';
+} else {
+  // Basic info
+  document.title = `${pro.name} — Quebra Galho`;
+  document.getElementById('proAvatar').src = pro.avatar;
+  document.getElementById('proBadge').textContent = pro.badge;
+  document.getElementById('proBadge').className = `badge ${pro.badgeType}`;
+  document.getElementById('proName').textContent = pro.name;
+  document.getElementById('proSpec').textContent = pro.specialty;
+  document.getElementById('proStars').innerHTML = renderStars(pro.rating);
+  document.getElementById('proRatingNum').textContent = pro.rating;
+  document.getElementById('proReviewsCount').textContent = `(${pro.reviews} avaliações)`;
+  document.getElementById('proBio').textContent = pro.bio;
+  document.getElementById('infoServices').textContent = `${pro.services} serviços realizados`;
+  document.getElementById('infoResponse').textContent = pro.responseTime;
+  document.getElementById('infoCompletion').textContent = pro.completionRate + ' de conclusão';
+  document.getElementById('infoPrice').textContent = pro.price + pro.priceUnit;
+  document.getElementById('bigRating').textContent = pro.rating;
+  document.getElementById('footerPrice').textContent = pro.price + pro.priceUnit;
+  document.getElementById('ctaBtn').href = `solicitar.html?id=${pro.id}`;
+
+  // Stats
+  document.getElementById('proStats').innerHTML = `
+    <div class="top-stat">
+      <div class="top-stat-num">${pro.services}</div>
+      <div class="top-stat-label">Serviços</div>
+    </div>
+    <div class="top-stat">
+      <div class="top-stat-num">${pro.rating}</div>
+      <div class="top-stat-label">Avaliação</div>
+    </div>
+    <div class="top-stat">
+      <div class="top-stat-num">${pro.completionRate}</div>
+      <div class="top-stat-label">Conclusão</div>
+    </div>
+  `;
+
+  // Rating bars
+  const bars = [5,4,3,2,1];
+  const vals = [70,20,7,2,1];
+  document.getElementById('ratingBars').innerHTML = bars.map((s,i) => `
+    <div class="eval-bar">
+      <div class="eval-label">${s}</div>
+      <div class="eval-track"><div class="eval-fill" style="width:${vals[i]}%"></div></div>
+      <div class="eval-count">${Math.round(pro.reviews * vals[i] / 100)}</div>
+    </div>
+  `).join('');
+
+  // Skills
+  document.getElementById('skillTags').innerHTML = pro.skills.map(s => `<div class="skill-tag">${s}</div>`).join('');
+
+  // Reviews
+  const proReviews = REVIEWS.filter(r => r.proId === pro.id);
+  const fallbackReviews = REVIEWS.slice(0,3);
+  const displayReviews = proReviews.length ? proReviews : fallbackReviews;
+  document.getElementById('reviewsList').innerHTML = displayReviews.map(r => `
+    <div class="review-card">
+      <div class="review-header">
+        <img src="${r.avatar}" class="review-avatar" alt="${r.name}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(r.name)}&background=00BFA5&color=fff&size=80'">
+        <div>
+          <div class="review-name">${r.name}</div>
+          <div class="review-date">${r.date}</div>
+        </div>
+        <div class="stars" style="margin-left:auto; color:#FFB300">${'<i class="fa-solid fa-star"></i>'.repeat(r.rating)}</div>
+      </div>
+      <div class="review-text">"${r.text}"</div>
+    </div>
+  `).join('');
+
+  // Photos
+  document.getElementById('photoGrid').innerHTML = (pro.photos || []).slice(0,6).map(p => `
+    <img src="${p}" class="photo-item" alt="Trabalho" loading="lazy" onclick="showToast('Foto ampliada! 🖼️')" onerror="this.style.background='var(--surface-3)'">
+  `).join('');
+}
+
+function toggleFav() {
+  isFav = !isFav;
+  const btn = document.getElementById('favBtn');
+  btn.classList.toggle('active', isFav);
+  showToast(isFav ? 'Adicionado aos favoritos! ❤️' : 'Removido dos favoritos');
+}
+</script>
+</body>
+</html>

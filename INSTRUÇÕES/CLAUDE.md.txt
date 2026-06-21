@@ -1,0 +1,149 @@
+# Quebra Galho — Protótipo Navegável (Prévia para Apresentação)
+
+## Contexto
+Estou desenvolvendo o "Quebra Galho", uma super plataforma de serviços brasileira — 
+como um iFood/Uber, mas para qualquer tipo de serviço: manutenção doméstica, 
+hidráulica, pintura, reformas, acompanhamento de idosos, transporte de crianças, 
+serviços digitais e muito mais. 
+
+Preciso de um protótipo navegável de alta qualidade visual para apresentação a 
+investidor. Foco total no fluxo do Cliente (quem contrata o serviço).
+
+## Stack
+- HTML5 + CSS3 + JavaScript Vanilla (sem frameworks)
+- Projeto multi-arquivo estruturado (pronto para Vercel)
+- Supabase já está definido para o futuro, mas neste protótipo os dados são mockados
+
+## Identidade Visual
+- Nome: Quebra Galho
+- Slogan: "APP SOLUCIONADOR"
+- Cor primária: Verde-teal (#00BFA5)
+- Cor secundária: Branco (#FFFFFF)
+- Texto: Quase preto (#1A1A1A)
+- Fonte: Inter ou Poppins (Google Fonts)
+- Estilo: Mobile-first, limpo, moderno, confiável
+- O logo é um "Q" circular estilizado em verde-teal
+
+## Estrutura de Arquivos
+
+quebra-galho/
+
+├── index.html           (tela de splash/boas-vindas)
+
+├── home.html            (home do cliente)
+
+├── categorias.html      (lista de categorias de serviço)
+
+├── profissionais.html   (lista de profissionais da categoria)
+
+├── perfil-pro.html      (perfil detalhado do profissional)
+
+├── solicitar.html       (formulário de solicitação do serviço)
+
+├── acompanhamento.html  (acompanhamento em tempo real do serviço)
+
+├── css/
+
+│   └── style.css        (estilos globais, variáveis, componentes)
+
+├── js/
+
+│   └── app.js           (navegação, dados mockados, interações)
+
+├── assets/
+
+│   └── logo.svg         (logo do Quebra Galho)
+
+└── vercel.json          (configuração de deploy)
+
+## Telas a Desenvolver (fluxo do Cliente)
+
+### 1. index.html — Splash / Boas-vindas
+- Logo centralizado animado (fade in)
+- Slogan "APP SOLUCIONADOR"
+- Botão "Entrar como Cliente" → vai para home.html
+- Fundo verde-teal com elementos decorativos sutis
+
+### 2. home.html — Home do Cliente
+- Header: "Olá, Carlos! 👋" + foto de perfil mockada
+- Barra de busca: "Qual serviço você precisa?"
+- Seção "Categorias" em grid com ícones:
+  • Hidráulica, Elétrica, Pintura, Reformas,
+    Acompanhamento de Idosos, Transporte Escolar,
+    Limpeza, Serviços Digitais, Ver todas
+- Seção "Profissionais em destaque" com cards horizontais
+- Seção "Serviços próximos de você"
+- Navbar inferior: Início · Serviços · Pedidos · Perfil
+
+### 3. categorias.html — Categorias
+- Header com voltar + título da categoria clicada
+- Grid de subcategorias (ex: Hidráulica → Vazamento, 
+  Instalação, Desentupimento...)
+- Ao clicar em qualquer subcategoria → profissionais.html
+
+### 4. profissionais.html — Lista de Profissionais
+- Header: categoria selecionada + filtros (Distância / Avaliação / Preço)
+- Cards de profissionais com:
+  • Foto, nome, badge "Top Pro" (quando aplicável)
+  • Estrelas de avaliação + número de serviços realizados
+  • Especialidade, distância, preço estimado
+  • Botão "Ver perfil"
+- Ao clicar → perfil-pro.html
+
+### 5. perfil-pro.html — Perfil do Profissional
+- Foto grande, nome, badge, avaliação geral
+- Seção "Sobre" com descrição do profissional
+- Especialidades (chips/tags)
+- Seção "Avaliações" com comentários de clientes mockados
+- Seção "Fotos do trabalho" (galeria mockada)
+- Botão fixo no rodapé: "Contratar agora" → solicitar.html
+
+### 6. solicitar.html — Solicitar Serviço
+- Header: "Solicitar Serviço"
+- Resumo do profissional selecionado (mini card)
+- Campo: Endereço do serviço
+- Campo: Descrição do que precisa (textarea)
+- Campo: Data e horário preferidos
+- Seção: Forma de pagamento (PIX / Cartão / Dinheiro — visual only)
+- Resumo de valores estimados
+- Botão "Confirmar solicitação" → acompanhamento.html
+
+### 7. acompanhamento.html — Acompanhamento em Tempo Real
+- Header: "Serviço em andamento"
+- Mini card do profissional + botão de chat (visual)
+- Status animado com linha do tempo:
+  • ✅ Pedido confirmado
+  • ✅ Profissional a caminho
+  • 🔄 Profissional chegou
+  • ⏳ Serviço em andamento
+  • ⏳ Concluído
+- Seção "Atualizações do profissional":
+  • Cards simulando mensagens/fotos chegando em tempo real
+    (usar setInterval para simular novas atualizações chegando)
+- Mapa mockado (div estilizada simulando um mapa)
+- Botão "Avaliar profissional" aparece ao final
+
+## Comportamentos e Interações JS
+- Navegação entre páginas via links HTML normais
+- Dados mockados em app.js (array de profissionais, categorias, avaliações)
+- Na tela de acompanhamento: simular atualizações chegando com setInterval
+- Animações suaves de entrada nas telas (fade in)
+- Navbar ativa destaca o item da página atual
+- Responsivo: funciona bem em mobile (375px) e desktop
+
+## Qualidade Visual Esperada
+- Visual de app mobile mesmo rodando no browser
+- Container centralizado máximo 430px (largura de celular)
+- Sombras suaves, bordas arredondadas generosas
+- Cards bem espaçados, hierarquia tipográfica clara
+- Ícones via Font Awesome ou Lucide Icons (CDN)
+- Nenhuma tela pode parecer "vazia" — todas com conteúdo mockado rico
+
+## Deploy
+- Incluir vercel.json simples para deploy estático
+- Projeto deve funcionar com `vercel --prod` sem configuração adicional
+
+## Observação Final
+Este é um protótipo de apresentação para investidor. 
+A qualidade visual é prioridade máxima. 
+Cada tela deve impressionar e comunicar claramente o conceito do app.

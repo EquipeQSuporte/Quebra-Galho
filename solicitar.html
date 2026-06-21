@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Solicitar Serviço — Quebra Galho</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .form-section {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .form-section-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .form-section-title i { color: var(--primary); font-size: 14px; }
+
+    .date-time-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .urgency-row { display: flex; gap: 8px; }
+    .urgency-chip {
+      flex: 1;
+      padding: 10px 8px;
+      border-radius: var(--r-sm);
+      border: 2px solid var(--border);
+      background: var(--surface-2);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-2);
+    }
+    .urgency-chip.selected { border-color: var(--primary); background: var(--primary-light); color: var(--primary-dark); }
+    [data-theme="dark"] .urgency-chip.selected { background: rgba(0,191,165,0.1); color: var(--primary); }
+    .urgency-icon { font-size: 18px; display: block; margin-bottom: 4px; }
+
+    .bottom-cta-spacer { height: 100px; }
+
+    .confirmation-view {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+    .steps-mini {
+      display: flex;
+      gap: 0;
+      margin: 20px 0 0;
+    }
+    .step-mini {
+      flex: 1;
+      text-align: center;
+      position: relative;
+    }
+    .step-mini::after {
+      content: '';
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      background: var(--border);
+    }
+    .step-mini:last-child::after { display: none; }
+    .step-mini.done::after { background: var(--primary); }
+    .step-dot {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 6px;
+      font-size: 12px;
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
+    }
+    .step-dot.done { background: var(--primary); color: white; }
+    .step-dot.pending { background: var(--surface-3); color: var(--text-3); }
+    .step-label { font-size: 10px; color: var(--text-2); font-weight: 500; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- FORM VIEW -->
+  <div id="formView">
+    <div class="page-header">
+      <button class="back-btn" onclick="history.back()"><i class="fa-solid fa-chevron-left"></i></button>
+      <div class="page-header-title">Solicitar Serviço</div>
+    </div>
+
+    <div class="page-content" style="padding-top:0; padding-bottom:0">
+
+      <!-- MINI PRO CARD -->
+      <div class="form-section">
+        <div class="section-title" style="margin-bottom:12px; font-size:14px; color:var(--text-2)">Profissional selecionado</div>
+        <div class="pro-card-mini" id="miniProCard">
+          <img id="miniAvatar" src="" class="pro-avatar-mini" alt="Profissional">
+          <div style="flex:1">
+            <div style="font-size:15px; font-weight:700" id="miniName">—</div>
+            <div style="font-size:13px; color:var(--text-2)" id="miniSpec">—</div>
+            <div class="rating" style="margin-top:4px">
+              <span id="miniStars"></span>
+              <span class="rating-num" id="miniRating" style="font-size:13px"></span>
+              <span class="rating-count" id="miniReviews"></span>
+            </div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:15px; font-weight:800; color:var(--primary)" id="miniPrice">—</div>
+            <div style="font-size:11px; color:var(--text-2)" id="miniPriceUnit">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ENDEREÇO -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <i class="fa-solid fa-location-dot"></i>
+          Local do serviço
+        </div>
+        <div class="input-group">
+          <label class="input-label">Endereço completo</label>
+          <div class="input-icon-wrap">
+            <i class="fa-solid fa-map-pin"></i>
+            <input type="text" class="input-field" placeholder="Rua, número, complemento" value="Rua das Flores, 123 — Apto 45">
+          </div>
+        </div>
+        <div class="input-group" style="margin-bottom:0">
+          <label class="input-label">Referência (opcional)</label>
+          <input type="text" class="input-field" placeholder="Ex: portão verde, 2º andar">
+        </div>
+      </div>
+
+      <!-- DESCRIÇÃO -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <i class="fa-solid fa-file-lines"></i>
+          Descreva o serviço
+        </div>
+        <div class="input-group" style="margin-bottom:0">
+          <label class="input-label">O que você precisa?</label>
+          <textarea class="input-textarea" placeholder="Ex: torneira da cozinha está vazando, preciso trocar rapidamente..." style="height:90px"></textarea>
+        </div>
+      </div>
+
+      <!-- DATA E HORA -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <i class="fa-solid fa-calendar"></i>
+          Data e horário
+        </div>
+        <div class="date-time-row" style="margin-bottom:14px">
+          <div class="input-group" style="margin-bottom:0">
+            <label class="input-label">Data preferida</label>
+            <input type="date" class="input-field" id="dateField">
+          </div>
+          <div class="input-group" style="margin-bottom:0">
+            <label class="input-label">Horário</label>
+            <input type="time" class="input-field" id="timeField" value="14:00">
+          </div>
+        </div>
+        <label class="input-label" style="margin-bottom:10px">Urgência</label>
+        <div class="urgency-row">
+          <div class="urgency-chip selected" onclick="selectUrgency(this, 'normal')">
+            <span class="urgency-icon">📅</span>
+            Normal
+          </div>
+          <div class="urgency-chip" onclick="selectUrgency(this, 'hoje')">
+            <span class="urgency-icon">⚡</span>
+            Hoje
+          </div>
+          <div class="urgency-chip" onclick="selectUrgency(this, 'urgente')">
+            <span class="urgency-icon">🚨</span>
+            Urgente
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGAMENTO -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <i class="fa-solid fa-credit-card"></i>
+          Forma de pagamento
+        </div>
+        <div class="payment-option selected" data-method="pix" onclick="selectPayment(this)">
+          <div class="pay-icon" style="background:#E0F7F4; color:#00BFA5"><i class="fa-brands fa-pix"></i></div>
+          <div class="pay-info">
+            <div class="pay-label">PIX</div>
+            <div class="pay-sub">Desconto de 5%</div>
+          </div>
+          <div class="pay-radio"></div>
+        </div>
+        <div class="payment-option" data-method="cartao" onclick="selectPayment(this)">
+          <div class="pay-icon" style="background:#E3F2FD; color:#1E88E5"><i class="fa-solid fa-credit-card"></i></div>
+          <div class="pay-info">
+            <div class="pay-label">Cartão de crédito</div>
+            <div class="pay-sub">Até 12× sem juros</div>
+          </div>
+          <div class="pay-radio"></div>
+        </div>
+        <div class="payment-option" data-method="dinheiro" onclick="selectPayment(this)">
+          <div class="pay-icon" style="background:#E8F5E9; color:#43A047"><i class="fa-solid fa-money-bill-wave"></i></div>
+          <div class="pay-info">
+            <div class="pay-label">Dinheiro</div>
+            <div class="pay-sub">Pagamento na conclusão</div>
+          </div>
+          <div class="pay-radio"></div>
+        </div>
+      </div>
+
+      <!-- RESUMO DE VALORES -->
+      <div class="form-section" style="border-bottom:none">
+        <div class="form-section-title">
+          <i class="fa-solid fa-receipt"></i>
+          Resumo de valores
+        </div>
+        <div class="summary-box">
+          <div class="summary-row">
+            <span class="summary-label">Serviço estimado</span>
+            <span class="summary-value" id="sumService">—</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Taxa do app</span>
+            <span class="summary-value">R$ 5,00</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Desconto PIX (5%)</span>
+            <span class="summary-value" style="color:#43A047" id="sumDiscount">—</span>
+          </div>
+          <div class="summary-row summary-total">
+            <span class="summary-label">Total estimado</span>
+            <span class="summary-value" id="sumTotal">—</span>
+          </div>
+        </div>
+        <p style="font-size:11px; color:var(--text-3); margin-top:10px; text-align:center; line-height:1.5">
+          * Valor final confirmado pelo profissional após visita. Sem cobrança surpresa.
+        </p>
+      </div>
+
+      <div class="bottom-cta-spacer"></div>
+    </div>
+
+    <div class="sticky-footer">
+      <button class="btn btn-primary btn-full btn-lg" onclick="confirmarSolicitacao()">
+        <i class="fa-solid fa-check-circle"></i>
+        Confirmar solicitação
+      </button>
+    </div>
+  </div>
+
+  <!-- CONFIRMATION VIEW -->
+  <div class="confirmation-view" id="confirmView">
+    <div class="page-content" style="padding-bottom:30px">
+      <div class="confirm-hero">
+        <div class="confirm-icon">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <div class="confirm-title">Solicitação enviada!</div>
+        <p class="confirm-sub">O profissional foi notificado e responderá em breve.</p>
+      </div>
+
+      <!-- Steps progress -->
+      <div style="padding:0 20px">
+        <div class="steps-mini">
+          <div class="step-mini done">
+            <div class="step-dot done"><i class="fa-solid fa-check" style="font-size:10px"></i></div>
+            <div class="step-label">Enviado</div>
+          </div>
+          <div class="step-mini">
+            <div class="step-dot pending">2</div>
+            <div class="step-label">Aceito</div>
+          </div>
+          <div class="step-mini">
+            <div class="step-dot pending">3</div>
+            <div class="step-label">A caminho</div>
+          </div>
+          <div class="step-mini">
+            <div class="step-dot pending">4</div>
+            <div class="step-label">Concluído</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mini pro info -->
+      <div style="padding:20px">
+        <div class="pro-card-mini" id="confirmMiniCard">
+          <img id="confirmAvatar" src="" class="pro-avatar-mini" alt="Profissional">
+          <div style="flex:1">
+            <div style="font-size:15px; font-weight:700" id="confirmName">—</div>
+            <div style="font-size:13px; color:var(--text-2)" id="confirmSpec">—</div>
+          </div>
+          <span class="badge badge-warning">Aguardando</span>
+        </div>
+      </div>
+
+      <div style="padding:0 20px">
+        <div class="summary-box">
+          <div class="summary-row">
+            <span class="summary-label"><i class="fa-solid fa-calendar" style="color:var(--primary);margin-right:6px"></i>Data</span>
+            <span class="summary-value" id="confirmDate">—</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label"><i class="fa-solid fa-clock" style="color:var(--primary);margin-right:6px"></i>Horário</span>
+            <span class="summary-value" id="confirmTime">—</span>
+          </div>
+          <div class="summary-row summary-total">
+            <span class="summary-label">Total estimado</span>
+            <span class="summary-value" id="confirmTotal">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:20px; display:flex; flex-direction:column; gap:10px">
+        <a href="acompanhamento.html" class="btn btn-primary btn-full btn-lg">
+          <i class="fa-solid fa-map-location-dot"></i>
+          Acompanhar serviço
+        </a>
+        <a href="home.html" class="btn btn-ghost btn-full">
+          <i class="fa-solid fa-house"></i>
+          Voltar ao início
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/app.js"></script>
+<script>
+const proId = getParam('id') || 1;
+const pro   = getPro(proId);
+
+// Set today as default date
+const today = new Date();
+const yyyy  = today.getFullYear();
+const mm    = String(today.getMonth() + 1).padStart(2,'0');
+const dd    = String(today.getDate()).padStart(2,'0');
+document.getElementById('dateField').value = `${yyyy}-${mm}-${dd}`;
+
+if (pro) {
+  document.getElementById('miniAvatar').src = pro.avatar;
+  document.getElementById('miniName').textContent = pro.name;
+  document.getElementById('miniSpec').textContent = pro.specialty;
+  document.getElementById('miniStars').innerHTML = renderStars(pro.rating);
+  document.getElementById('miniRating').textContent = pro.rating;
+  document.getElementById('miniReviews').textContent = `(${pro.reviews})`;
+  document.getElementById('miniPrice').textContent = pro.price;
+  document.getElementById('miniPriceUnit').textContent = pro.priceUnit;
+
+  const baseVal = parseInt(pro.price.replace(/\D+/,'')) || 100;
+  const discount = Math.round(baseVal * 0.05);
+  const total = baseVal + 5 - discount;
+  document.getElementById('sumService').textContent = `R$ ${baseVal},00`;
+  document.getElementById('sumDiscount').textContent = `- R$ ${discount},00`;
+  document.getElementById('sumTotal').textContent = `R$ ${total},00`;
+
+  // Confirmation card
+  document.getElementById('confirmAvatar').src = pro.avatar;
+  document.getElementById('confirmName').textContent = pro.name;
+  document.getElementById('confirmSpec').textContent = pro.specialty;
+  document.getElementById('confirmTotal').textContent = `R$ ${total},00`;
+}
+
+function selectUrgency(el, type) {
+  document.querySelectorAll('.urgency-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  if (type === 'urgente') showToast('Taxa adicional de urgência aplicada (+20%)');
+}
+
+function confirmarSolicitacao() {
+  const date = document.getElementById('dateField').value;
+  const time = document.getElementById('timeField').value;
+  const [y,m,d] = date.split('-');
+  document.getElementById('confirmDate').textContent = `${d}/${m}/${y}`;
+  document.getElementById('confirmTime').textContent = time || '14:00';
+
+  document.getElementById('formView').style.display = 'none';
+  document.getElementById('confirmView').style.display = 'block';
+  window.scrollTo(0,0);
+
+  // Store active service
+  storeData('activeService', { proId: pro ? pro.id : 1, status: 'confirmado' });
+}
+</script>
+</body>
+</html>
