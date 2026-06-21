@@ -1862,3 +1862,42 @@ a  { text-decoration: none; color: inherit; }
   .top-pros { gap: 20px; }
 }
 
+/* =============================================
+   DARK MODE — menos cor, mais escuro
+   ============================================= */
+
+/* Primary mais apagado no dark */
+[data-theme="dark"] {
+  --primary: #009985;
+  --primary-gradient: #009985;
+  --primary-light: #0a2228;
+}
+
+/* Áreas verdes viram navy escuro */
+[data-theme="dark"] .home-hdr       { background: #0d1f35 !important; box-shadow: 0 8px 24px rgba(0,0,0,0.5) !important; }
+[data-theme="dark"] .hero-card      { background: #152239 !important; box-shadow: 0 4px 16px rgba(0,0,0,0.3) !important; }
+[data-theme="dark"] .active-bar     { background: #152239 !important; box-shadow: 0 4px 16px rgba(0,0,0,0.3) !important; }
+[data-theme="dark"] .profile-header { background: #0d1f35 !important; }
+[data-theme="dark"] .profile-top    { background: #0d1f35 !important; }
+[data-theme="dark"] .splash         { background: #0d1f35 !important; }
+[data-theme="dark"] .confirm-icon   { background: #007A6E !important; }
+
+/* Ícones coloridos das categorias → fundo neutro escuro */
+[data-theme="dark"] .cat-pill-icon    { background: rgba(255,255,255,0.07) !important; }
+[data-theme="dark"] .near-icon        { background: rgba(255,255,255,0.07) !important; }
+[data-theme="dark"] .update-icon-wrap { background: rgba(255,255,255,0.07) !important; }
+[data-theme="dark"] .cat-icon-wrap    { background: rgba(255,255,255,0.07) !important; }
+[data-theme="dark"] .sub-icon         { background: rgba(255,255,255,0.07) !important; }
+[data-theme="dark"] .settings-item-icon { background: rgba(255,255,255,0.07) !important; }
+[data-theme="dark"] .transaction-icon { background: rgba(255,255,255,0.07) !important; }
+[data-theme="dark"] .active-bar-icon  { background: rgba(255,255,255,0.12) !important; }
+[data-theme="dark"] .sf-icon          { background: rgba(255,255,255,0.12) !important; }
+[data-theme="dark"] .pay-icon         { background: rgba(255,255,255,0.07) !important; }
+
+/* Badges no dark */
+[data-theme="dark"] .badge-danger  { background: rgba(244,67,54,0.15); color: #EF9A9A; }
+[data-theme="dark"] .badge-primary { background: rgba(0,153,133,0.2); color: #009985; }
+
+/* Notif dot borda correta no dark */
+[data-theme="dark"] .hdr-notif-dot { border-color: #0d1f35; }
+
