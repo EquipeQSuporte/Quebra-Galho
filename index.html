@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Quebra Galho — APP Solucionador</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Quebra Galho">
+  <meta name="theme-color" content="#00C2A8">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
@@ -242,6 +248,22 @@
         <i class="fa-solid fa-briefcase"></i>
         Sou Profissional
       </a>
+      <!-- INSTALL BUTTON (Android) -->
+      <button id="installBtn" class="btn-splash-ghost" style="display:none" onclick="installApp()">
+        <i class="fa-solid fa-plus"></i> Adicionar à tela inicial
+      </button>
+
+      <!-- iOS INSTRUCTION -->
+      <div id="iosHint" style="display:none; text-align:center; padding:12px 16px; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2); border-radius:16px; animation:fadeIn .5s ease">
+        <div style="font-size:13px; font-weight:600; color:white; margin-bottom:6px">
+          <i class="fa-solid fa-arrow-up-from-bracket"></i> Adicionar à tela inicial
+        </div>
+        <div style="font-size:12px; color:rgba(255,255,255,0.75); line-height:1.5">
+          Toque em <i class="fa-solid fa-arrow-up-from-bracket"></i> na barra do Safari<br>
+          depois em <strong>"Adicionar à Tela de Início"</strong>
+        </div>
+      </div>
+
       <div class="splash-footer-txt">Quebra Galho © 2026 — Versão 1.0</div>
     </div>
   </div>
@@ -249,8 +271,33 @@
 
 <script src="js/app.js"></script>
 <script>
-function showProAlert() {
-  showToast('Área do profissional chegando em breve! 🚀');
+// Registra service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+// Android — captura prompt de instalação
+let installPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  installPrompt = e;
+  document.getElementById('installBtn').style.display = 'flex';
+});
+
+function installApp() {
+  if (!installPrompt) return;
+  installPrompt.prompt();
+  installPrompt.userChoice.then(() => {
+    installPrompt = null;
+    document.getElementById('installBtn').style.display = 'none';
+  });
+}
+
+// iPhone — detecta iOS Safari (não suporta beforeinstallprompt)
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isStandalone = window.navigator.standalone;
+if (isIOS && !isStandalone) {
+  document.getElementById('iosHint').style.display = 'block';
 }
 </script>
 </body>

@@ -319,3 +319,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const themeBtn = document.getElementById('themeToggle');
   if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
 });
+
+// Registra service worker em todas as páginas
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
