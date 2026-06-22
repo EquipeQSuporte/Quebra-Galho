@@ -1,14 +1,12 @@
-const CACHE = 'qg-v2';
-const ASSETS = [
-  '/', '/index.html', '/home.html', '/categorias.html',
-  '/profissionais.html', '/perfil-pro.html', '/pedidos.html',
-  '/receber.html', '/ganhos.html', '/perfil-usuario.html',
-  '/acompanhamento.html', '/solicitar.html', '/pro-home.html',
-  '/css/style.css', '/js/app.js', '/assets/icon.png', '/assets/logo.svg'
+const CACHE = 'qg-v3';
+
+// Só imagens e fontes ficam em cache (raramente mudam)
+const STATIC = [
+  '/assets/icon.png', '/assets/icon-180.png', '/assets/icon-192.png', '/assets/logo.svg'
 ];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(STATIC)));
   self.skipWaiting();
 });
 
@@ -20,7 +18,22 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request).catch(() => caches.match('/index.html')))
-  );
+  const url = new URL(e.request.url);
+  const isStatic = /\.(png|webp|svg|jpg|jpeg|woff2?)$/.test(url.pathname);
+
+  if (isStatic) {
+    // Cache-first para imagens/fontes
+    e.respondWith(
+      caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
+        const clone = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone));
+        return res;
+      }))
+    );
+  } else {
+    // Network-first para HTML, CSS, JS — sempre busca versão atual
+    e.respondWith(
+      fetch(e.request).catch(() => caches.match(e.request) || caches.match('/index.html'))
+    );
+  }
 });
